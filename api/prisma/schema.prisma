@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model CustomerFeedback {
+  id                 Int          @id @default(autoincrement())
+  source             String?
+  customerIdentifier String?
+  content            String
+  autoCategories     Json?        // 登録時の即時AIタグ付け
+  createdAt          DateTime     @default(now())
+
+  analyses           FeedbackAnalysis[] // N:M
+  @@map("customer_feedback")
+}
+
+model AiAnalysis {
+  id         Int      @id @default(autoincrement())
+  summary    String?
+  sentiment  Sentiment?
+  categories Json?     // ex: ["ui", "save_page"]
+  insights   String?   // ex: "ユーザーは保存の箇所で詰まっている"
+  impact     String?   // ex: "売上には大きく関わらないがUXが悪い"
+  priority   Int?      // ex: 1=High, 2=Medium, 3=Low
+  createdAt  DateTime  @default(now())
+
+  feedbacks  FeedbackAnalysis[]
+  @@map("ai_analysis")
+}
+
+model FeedbackAnalysis {
+  feedbackId Int
+  analysisId Int
+
+  feedback   CustomerFeedback @relation(fields: [feedbackId], references: [id])
+  analysis   AiAnalysis       @relation(fields: [analysisId], references: [id])
+
+  @@id([feedbackId, analysisId])
+  @@map("feedback_analysis")
+}
+
+enum Sentiment {
+  positive
+  neutral
+  negative
+}
