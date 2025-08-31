@@ -6,6 +6,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AppController } from './app.controller';
       sortSchema: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppResolver, AppService],
