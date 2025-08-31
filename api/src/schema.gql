@@ -3,5 +3,12 @@
 # ------------------------------------------------------
 
 type Query {
-  helloWorld: String!
+  getUser: User!
+  hello: String!
+}
+
+type User {
+  id: Int!
+  isActive: Boolean
+  name: String!
 }
