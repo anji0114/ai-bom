@@ -2,7 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type CustomerFeedback {
+  autoCategories: [String!]
+  content: String!
+  customerIdentifier: String
+  id: Int!
+}
+
 type Query {
+  getFeedbacks: [CustomerFeedback!]!
   getUser: User!
   hello: String!
 }

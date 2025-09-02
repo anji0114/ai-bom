@@ -6,7 +6,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { AppService } from './modules/app/app.service';
 import { AppController } from './modules/app/app.controller';
 import { UserModule } from './modules/user/user.module';
-import { PrismaService } from './prisma/prisma.service';
+import { FeedbackModule } from './modules/feedback/feedback.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -18,8 +19,10 @@ import { PrismaService } from './prisma/prisma.service';
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     UserModule,
+    FeedbackModule,
+    PrismaModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService],
 })
 export class AppModule {}
