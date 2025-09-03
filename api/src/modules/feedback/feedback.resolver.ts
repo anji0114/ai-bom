@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql';
+import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CustomerFeedback } from './feedbak.model';
 import { FeedbackService } from './feedback.service';
 
@@ -9,5 +9,16 @@ export class FeedbackResolver {
   @Query(() => [CustomerFeedback])
   getFeedbacks(): Promise<CustomerFeedback[]> {
     return this.feedbackService.getFeedbacks();
+  }
+
+  @Mutation(() => CustomerFeedback)
+  createFeedback(): Promise<CustomerFeedback> {
+    const feedback = {
+      content: 'test',
+      customerIdentifier: 'test',
+      autoCategories: [],
+    };
+
+    return this.feedbackService.createFeedback(feedback);
   }
 }

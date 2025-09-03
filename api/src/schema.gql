@@ -2,11 +2,20 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type CustomerCategory {
+  name: String!
+  slug: String!
+}
+
 type CustomerFeedback {
-  autoCategories: [String!]
+  autoCategories: [CustomerCategory!]
   content: String!
   customerIdentifier: String
   id: Int!
+}
+
+type Mutation {
+  createFeedback: CustomerFeedback!
 }
 
 type Query {
