@@ -30,3 +30,5 @@
 
   # Client specific
   client/.env
+
+  .mcp.json

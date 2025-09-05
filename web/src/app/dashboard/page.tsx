@@ -1,3 +1,9 @@
-export default function DashboardPage() {
-  return <div>Dashboard</div>;
-}
+"use client";
+
+import { Dashboard } from "@/components/Dashboard";
+
+const DashboardPage = () => {
+  return <Dashboard />;
+};
+
+export default DashboardPage;
