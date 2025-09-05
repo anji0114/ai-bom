@@ -2,30 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type CustomerCategory {
-  name: String!
-  slug: String!
-}
-
-type CustomerFeedback {
-  autoCategories: [CustomerCategory!]
-  content: String!
-  customerIdentifier: String
-  id: Int!
-}
-
 type Mutation {
-  createFeedback: CustomerFeedback!
+  logout: Boolean!
 }
 
 type Query {
-  getFeedbacks: [CustomerFeedback!]!
-  getUser: User!
-  hello: String!
+  getMe: User
 }
 
 type User {
-  id: Int!
-  isActive: Boolean
-  name: String!
+  email: String!
+  id: String!
+  image: String
+  name: String
 }

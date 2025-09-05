@@ -5,6 +5,10 @@ import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import GoogleIcon from "@mui/icons-material/Google";
 
 export default function TopPage() {
+  const handleLogin = () => {
+    window.location.href = process.env.NEXT_PUBLIC_API_URL + "/api/auth/google";
+  };
+
   return (
     <Container component="main" maxWidth="md">
       <Box
@@ -35,8 +39,7 @@ export default function TopPage() {
           プロダクトの次の一手を、データドリブンで導き出します。
         </Typography>
         <Button
-          component="a"
-          href="/api/auth/google" // バックエンドのログイン開始エンドポイント
+          onClick={handleLogin}
           variant="contained"
           size="large"
           startIcon={<GoogleIcon />}

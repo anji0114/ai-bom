@@ -5,9 +5,8 @@ import { join } from 'path';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { AppService } from './modules/app/app.service';
 import { AppController } from './modules/app/app.controller';
-import { UserModule } from './modules/user/user.module';
-import { FeedbackModule } from './modules/feedback/feedback.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -18,9 +17,8 @@ import { PrismaModule } from './prisma/prisma.module';
       sortSchema: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
-    UserModule,
-    FeedbackModule,
     PrismaModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
