@@ -14,46 +14,87 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  image     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-model CustomerFeedback {
-  id                 Int          @id @default(autoincrement())
-  source             String?
-  customerIdentifier String?
-  content            String
-  autoCategories     Json?        // 登録時の即時AIタグ付け
-  createdAt          DateTime     @default(now())
-
-  analyses           FeedbackAnalysis[] // N:M
-  @@map("customer_feedback")
+  // このユーザーに紐づく認証・セッション情報
+  accounts  Account[]
+  sessions  Session[]
+  
+  // このユーザーが所有するVoCとタグ
+  voicings  Voicing[]
+  tags      Tag[]
 }
 
-model AiAnalysis {
-  id         Int      @id @default(autoincrement())
-  summary    String?
-  sentiment  Sentiment?
-  categories Json?     // ex: ["ui", "save_page"]
-  insights   String?   // ex: "ユーザーは保存の箇所で詰まっている"
-  impact     String?   // ex: "売上には大きく関わらないがUXが悪い"
-  priority   Int?      // ex: 1=High, 2=Medium, 3=Low
-  createdAt  DateTime  @default(now())
-
-  feedbacks  FeedbackAnalysis[]
-  @@map("ai_analysis")
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  provider          String  // "google"
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
 }
 
-model FeedbackAnalysis {
-  feedbackId Int
-  analysisId Int
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  expires      DateTime
+  sessionToken String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  feedback   CustomerFeedback @relation(fields: [feedbackId], references: [id])
-  analysis   AiAnalysis       @relation(fields: [analysisId], references: [id])
+// --- アプリケーションコア機能モデル ---
 
-  @@id([feedbackId, analysisId])
-  @@map("feedback_analysis")
+model Voicing {
+  id            String    @id @default(cuid())
+  content       String
+  source        String
+  summary       String?
+  sentiment     Sentiment?
+  impactScore   Int?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // どのユーザーに紐づくか
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // このVoCに付けられたタグ
+  tags          VoicingTag[]
+}
+
+model Tag {
+  id          String    @id @default(cuid())
+  name        String
+  
+  // どのユーザーに紐づくか
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  voicings    VoicingTag[]
+  
+  // タグ名はユーザーごとにユニーク
+  @@unique([userId, name])
+}
+
+model VoicingTag {
+  voicingId String
+  tagId     String
+  voicing   Voicing @relation(fields: [voicingId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  @@id([voicingId, tagId])
 }
 
 enum Sentiment {
-  positive
-  neutral
-  negative
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
 }
