@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 import { graphql, useFragment } from "@/gql";
@@ -23,19 +23,28 @@ const fragment = graphql(`
 `);
 
 export const AuthGuard = ({ children }: { children: ReactNode }) => {
+  const [isMounted, setIsMounted] = useState(false);
   const { data, loading, error } = useQuery(GetmeDocument);
   const meData = useFragment(fragment, data?.getMe);
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !error) {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted && !loading && !error) {
       if (!meData) {
         router.push("/");
       }
     }
-  }, [data, loading, error]);
+  }, [isMounted, meData, loading, error, router]);
 
-  if (loading || !meData) {
+  if (!isMounted || loading) {
+    return <Loading />;
+  }
+
+  if (!meData) {
     return <Loading />;
   }
 

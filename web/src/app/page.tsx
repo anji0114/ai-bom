@@ -1,14 +1,8 @@
-"use client";
-
-import { Box, Button, Container, Typography, Stack } from "@mui/material";
+import { Box, Container, Typography, Stack } from "@mui/material";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
-import GoogleIcon from "@mui/icons-material/Google";
+import { LoginButton } from "@/components/ui/LoginButton";
 
-export default function TopPage() {
-  const handleLogin = () => {
-    window.location.href = process.env.NEXT_PUBLIC_API_URL + "/api/auth/google";
-  };
-
+const TopPage = () => {
   return (
     <Container component="main" maxWidth="md">
       <Box
@@ -38,21 +32,7 @@ export default function TopPage() {
           Agentは、散らばった顧客からのフィードバック(VoC)をAIが自動で整理・分析。
           プロダクトの次の一手を、データドリブンで導き出します。
         </Typography>
-        <Button
-          onClick={handleLogin}
-          variant="contained"
-          size="large"
-          startIcon={<GoogleIcon />}
-          sx={{
-            textTransform: "none",
-            fontSize: "1.1rem",
-            px: 4,
-            py: 1.5,
-            borderRadius: "50px",
-          }}
-        >
-          Googleでログイン / 新規登録
-        </Button>
+        <LoginButton />
       </Box>
 
       <Stack
@@ -88,4 +68,6 @@ export default function TopPage() {
       </Stack>
     </Container>
   );
-}
+};
+
+export default TopPage;

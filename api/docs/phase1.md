@@ -1,99 +1,179 @@
-# 📘 アプリ概要ドキュメント（POC版）
+# **PDM AI Agent - PoC開発仕様書**
 
-## 1. アプリ概要
+**1. プロダクト概要**
 
-本アプリは **顧客の声（Voice of Customer, VOC）を収集・分析** することを目的とした POC アプリケーションです。
+AIを活用し、プロダクトマネジメントにおける顧客の声（VoC）の整理・分析業務を自動化・効率化するSaaSの概念実証（PoC）版。ユーザーが登録したVoCに対し、AIが自動で「分類」「感情分析」「インパクト評価」「要約」を行い、直感的なダッシュボードで可視化する。
 
-- ユーザーはアカウント作成やログイン不要（Basic 認証のみ）
-- 顧客の声（フィードバック）をアプリに登録
-- 登録時に軽量な AI 処理で **自動カテゴリ分類（タグ付け）**
-- ユーザーは複数のフィードバックを選択して **AI による詳細分析** を実行
-- 分析結果は **要約、感情、カテゴリ、インサイト、影響度、優先度** といった情報を含む
+**PoCのゴール:** 「AIによるVoC自動分析」というコアバリューが、ユーザーにとって価値があるかを最速で検証する。
 
-POC フェーズの狙いは、
-「顧客の声を元に AI がどのような整理・洞察を提供できるか」を確認することです。
+**2. アーキテクチャ概要**
 
----
+- **フロントエンド:** Next.js
+- **バックエンド:** NestJS
+- **API:** GraphQL
+- **データベース:** PostgreSQL (Prisma ORM)
+- **認証:** Auth0 (Googleログイン) + NestJSによるHttpOnly Cookieセッション管理
+- **AI連携:** langchain.js経由で外部LLM APIを利用
 
-## 2. データベース設計
+**3. データベーススキーマ**
 
-### エンティティ一覧
+PoCでは、ユーザー(`User`)を基点とし、すべてのデータ（`Voicing`, `Tag`）がユーザーに紐づくシングルテナントモデルを採用する。
 
-- **CustomerFeedback**
-  顧客の声を1件ずつ保存するテーブル。登録時に軽いAI処理で自動カテゴリを付与。
+prisma
 
-- **AiAnalysis**
-  ユーザーが複数のフィードバックを選択して AI による詳細分析を行った結果を保存するテーブル。
+```sql
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  image     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-- **FeedbackAnalysis（中間テーブル）**
-  どのフィードバックがどの分析に利用されたかを管理。
+  accounts  Account[]
+  sessions  Session[]
 
----
-
-### Prisma モデル定義
-
-```prisma
-model CustomerFeedback {
-  id                 Int          @id @default(autoincrement())
-  source             String?
-  customerIdentifier String?
-  content            String
-  autoCategories     Json?        // 登録時の即時AIタグ付け
-  createdAt          DateTime     @default(now())
-
-  analyses           FeedbackAnalysis[] // N:M
-  @@map("customer_feedback")
+  voicings  Voicing[]
+  tags      Tag[]
 }
 
-model AiAnalysis {
-  id         Int      @id @default(autoincrement())
-  summary    String?
-  sentiment  Sentiment?
-  categories Json?     // ex: ["ui", "save_page"]
-  insights   String?   // ex: "保存操作でユーザーが混乱している"
-  impact     String?   // ex: "UX低下、売上影響は小"
-  priority   Int?      // 1=High, 2=Medium, 3=Low
-  createdAt  DateTime  @default(now())
+model Account {
+  id                 String        @id @default(cuid())
+  userId             String
+  provider           AuthProvider
+  providerAccountId  String
 
-  feedbacks  FeedbackAnalysis[]
-  @@map("ai_analysis")
+  accessToken       String?       @db.Text
+  refreshToken      String?       @db.Text
+  idToken           String?       @db.Text
+  expiresAt         DateTime?
+
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
-model FeedbackAnalysis {
-  feedbackId Int
-  analysisId Int
+model Session {
+  id            String    @id @default(cuid())
+  userId        String
+  sessionToken  String    @unique
+  expires       DateTime
 
-  feedback   CustomerFeedback @relation(fields: [feedbackId], references: [id])
-  analysis   AiAnalysis       @relation(fields: [analysisId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  @@id([feedbackId, analysisId])
-  @@map("feedback_analysis")
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expires])
 }
 
-enum Sentiment {
-  positive
-  neutral
-  negative
+// ---------- Domain ----------
+model Voicing {
+  id            String     @id @default(cuid())
+  userId        String
+  content       String
+  source        String
+  summary       String?
+  sentiment     Sentiment?
+  impactScore   Int?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags          VoicingTag[]
+
+  @@index([userId, createdAt])
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  userId    String
+  name      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  voicings  VoicingTag[]
+
+  // ユーザー内ユニーク
+  @@unique([userId, name])
+}
+
+model VoicingTag {
+  voicingId String
+  tagId     String
+  createdAt DateTime @default(now())
+
+  voicing   Voicing @relation(fields: [voicingId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([voicingId, tagId])
 }
 ```
 
----
+**4. ページ別機能仕様**
 
-## 3. データフロー
+PoCで開発するページは、実質的に以下の2ページと1つのモーダルコンポーネントです。
 
-1. **フィードバック登録**
-   - `CustomerFeedback` に保存
-   - `autoCategories` に軽量AIでタグ付け
+**4.1. トップページ / ログインページ**
 
-2. **ユーザー操作（複数選択 → 分析実行）**
-   - 選択されたフィードバック群を元に AI で分析
-   - 結果を `AiAnalysis` に保存
-   - `FeedbackAnalysis` に対象フィードバックとの関連を保存
+- **URL:** `/`
+- **目的:** サービス未利用のユーザーをログインに導くためのランディングページ。
+- **表示条件:** ユーザーが認証されていない場合のみ表示。認証済みの場合は`/dashboard`へリダイレクトする。
+- **機能一覧:**
+  - **① サービス紹介:**
+    - **内容:** 「AIで顧客の声を自動分析」「散らばるフィードバックを瞬時に整理」といった、サービスのコアバリューを伝える見出しと簡単な説明文を配置する。
+    - **目的:** ユーザーに「これは何のサービスか」を即座に理解させる。
+  - **② ログインボタン:**
+    - **内容:** 「Googleでログイン / 新規登録」と書かれた目立つボタンを配置する。
+    - **動作:** クリックすると、バックエンド(NestJS)のログイン開始エンドポイント (`/api/auth/google`) に遷移する。その後、ユーザーはGoogleの認証画面にリダイレクトされる。
 
----
+**4.2. VoCダッシュボード**
 
-## 4. 今後の拡張想定
+- **URL:** `/dashboard`
+- **目的:** ログインユーザーがVoCを一覧し、分析結果を俯瞰するためのメイン画面。
+- **表示条件:** ユーザーが認証されている場合のみ表示。認証されていない場合はトップページ`/`へリダイレクトする。
+- **機能一覧:**
+  - **① ヘッダー:**
+    - **内容:** 画面上部に常に表示される。左側にサービスロゴ、右側にユーザーのプロフィール画像と名前を表示する。
+    - **動作:** ユーザー名部分をクリックするとドロップダウンメニューが開き、「ログアウト」ボタンが表示される。ログアウトボタンを押すと、バックエンドのログアウトエンドポイントを呼び出し、セッションを破棄してトップページ`/`に遷移する。
+  - **② サマリーエリア:**
+    - **内容:** 登録されたVoC全体の統計情報を表示するカードやグラフを配置する。（例: 「VoC総数: 58件」「感情比率: Positive 60% / Negative 40%」「タグ別件数」など）
+    - **目的:** ユーザーがVoCの全体像を直感的に把握できるようにする。
+  - **③ VoC一覧テーブル:**
+    - **内容:** 自分が登録したVoCを一行ずつテーブル形式で表示する。表示するカラムは「VoC要約」「タグ」「感情」「インパクト」「受信日時」など。
+    - **目的:** 個々のVoCの分析結果を一覧で比較・確認できるようにする。
+  - **④ VoC追加ボタン:**
+    - **内容:** 「+ VoCを追加」のようなボタンをテーブルの上部などに配置する。
+    - **動作:** クリックすると、後述の「VoC追加モーダル」が表示される。
+  - **⑤ フィルタリング機能:**
+    - **内容:** テーブルの上部に、タグ、感情、キーワード検索などのフィルターUIを配置する。
+    - **動作:** ユーザーがフィルター条件を選択・入力すると、VoC一覧テーブルの表示内容がリアルタイム（または適用ボタン押下時）に絞り込まれる。
+  - **⑥ 詳細表示機能:**
+    - **内容:** テーブルの各行をクリック可能にする。
+    - **動作:** 行をクリックすると、そのVoCの詳細情報を持つ「VoC詳細モーダル」が表示される。
 
-- `pdm_item`（製品改善アイデア）テーブルを追加し、AiAnalysis から改善タスクへ連携
-- ユーザー管理やプロジェクト管理の追加（Basic 認証から拡張）
-- 定期的なバッチ分析や自動クラスタリング
+**4.3. VoC追加 / 詳細モーダル**
+
+- **URL:** なし (ダッシュボードページ内のコンポーネント)
+- **目的:** VoCの新規作成と、既存VoCの詳細情報の確認を行う。
+- **機能一覧:**
+  - **① 追加モード:**
+    - **表示条件:** ダッシュボードの「VoC追加ボタン」を押したときに表示。
+    - **入力項目:**
+      - `content` (VoC原文): 複数行入力可能なテキストエリア。
+      - `source` (収集元): 「手動入力」「Slack」などを選択できるプルダウン。
+    - **アクション:** 「保存」ボタンを押すと、入力内容をバックエンドに送信する。成功したらモーダルを閉じ、ダッシュボードのVoC一覧を更新する。
+  - **② 詳細モード:**
+    - **表示条件:** ダッシュボードのVoC一覧テーブルの行をクリックしたときに表示。
+    - **表示項目 (読み取り専用):**
+      - VoC原文 (`content`)
+      - AIによる要約 (`summary`)
+      - AIによる感情分析結果 (`sentiment`)
+      - AIによるインパクト評価 (`impactScore`)
+      - AIによって付与されたタグ (`tags`) の一覧
+    - **目的:** AIがどのような分析を行ったかをユーザーが確認できるようにする。
