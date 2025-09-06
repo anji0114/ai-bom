@@ -18,51 +18,21 @@ import {
   TableHead,
   TableRow,
   Chip,
-  IconButton,
-  Avatar,
-  Menu,
-  MenuItem,
-  ListItemIcon,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
-import Logout from "@mui/icons-material/Logout";
 import { useState, useEffect } from "react";
+import { UserMenu } from "./Menu";
+import { CreateVoiceModal } from "./CreateVoiceModal";
 
 // ユーザーメニュー用のコンポーネント
-function UserMenu() {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) =>
-    setAnchorEl(event.currentTarget);
-  const handleClose = () => setAnchorEl(null);
-
-  return (
-    <>
-      <IconButton onClick={handleClick} size="small">
-        <Avatar sx={{ width: 32, height: 32 }}>U</Avatar>
-      </IconButton>
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <MenuItem
-          onClick={() => {
-            /* ログアウト処理 */
-          }}
-        >
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          ログアウト
-        </MenuItem>
-      </Menu>
-    </>
-  );
-}
 
 export const Dashboard = () => {
   const [voicings, setVoicings] = useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     // ダミーデータ。実際にはAPIから取得します。
@@ -103,6 +73,18 @@ export const Dashboard = () => {
     setVoicings(dummyVoicings);
   }, []);
 
+  const handleCreateVoice = (data: any) => {
+    const newVoice = {
+      id: voicings.length + 1,
+      summary: data.summary,
+      tags: data.tags,
+      sentiment: data.sentiment,
+      impact: data.impact,
+      date: new Date().toISOString().split('T')[0],
+    };
+    setVoicings([newVoice, ...voicings]);
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       {/* ヘッダー */}
@@ -114,7 +96,7 @@ export const Dashboard = () => {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             PDM AI Agent
           </Typography>
-          {/* <UserMenu /> */}
+          <UserMenu />
         </Toolbar>
       </AppBar>
 
@@ -154,7 +136,11 @@ export const Dashboard = () => {
                 }}
               >
                 <Typography variant="h6">顧客の声 (VoC) 一覧</Typography>
-                <Button variant="contained" startIcon={<AddIcon />}>
+                <Button 
+                  variant="contained" 
+                  startIcon={<AddIcon />}
+                  onClick={() => setIsModalOpen(true)}
+                >
                   VoCを追加
                 </Button>
               </Box>
@@ -219,7 +205,12 @@ export const Dashboard = () => {
           </Card>
         </Container>
       </Box>
-      {/* ここにVoC追加/詳細モーダルコンポーネントを配置 */}
+      
+      <CreateVoiceModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateVoice}
+      />
     </Box>
   );
 };

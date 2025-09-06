@@ -20,3 +20,7 @@ export function AuthGuard() {
   return <div>AuthGuard</div>;
 }
 ```
+
+### 注意点
+
+実装後、文字化けしていないか確認してください。

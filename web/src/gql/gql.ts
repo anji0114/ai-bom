@@ -16,10 +16,12 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 type Documents = {
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": typeof types.GetmeDocument,
     "\n  fragment Me on User {\n    id\n  }\n": typeof types.MeFragmentDoc,
+    "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateVoicingDocument,
 };
 const documents: Documents = {
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": types.GetmeDocument,
     "\n  fragment Me on User {\n    id\n  }\n": types.MeFragmentDoc,
+    "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n": types.CreateVoicingDocument,
 };
 
 /**
@@ -44,6 +46,10 @@ export function graphql(source: "\n  query Getme {\n    getMe {\n      ...Me\n  
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  fragment Me on User {\n    id\n  }\n"): (typeof documents)["\n  fragment Me on User {\n    id\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

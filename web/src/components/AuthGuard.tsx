@@ -24,7 +24,9 @@ const fragment = graphql(`
 
 export const AuthGuard = ({ children }: { children: ReactNode }) => {
   const [isMounted, setIsMounted] = useState(false);
-  const { data, loading, error } = useQuery(GetmeDocument);
+  const { data, loading, error } = useQuery(GetmeDocument, {
+    pollInterval: 60 * 60 * 1000,
+  });
   const meData = useFragment(fragment, data?.getMe);
   const router = useRouter();
 
