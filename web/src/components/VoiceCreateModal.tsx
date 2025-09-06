@@ -12,8 +12,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Chip,
-  OutlinedInput,
   FormHelperText,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
@@ -29,22 +27,10 @@ const voiceSchema = z.object({
 
 type VoiceFormData = z.infer<typeof voiceSchema>;
 
-interface CreateVoiceModalProps {
+interface VoiceCreateModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: VoiceFormData) => void;
 }
-
-const TAGS_OPTIONS = [
-  "UI/UX改善",
-  "機能要望",
-  "料金・プラン",
-  "不具合報告",
-  "パフォーマンス",
-  "セキュリティ",
-  "サポート",
-  "その他",
-];
 
 const CREATE_VOICING_MUTATION = graphql(`
   mutation CreateVoicing($input: CreateVoicingInput!) {
@@ -54,7 +40,7 @@ const CREATE_VOICING_MUTATION = graphql(`
   }
 `);
 
-export const CreateVoiceModal = ({ open, onClose }: CreateVoiceModalProps) => {
+export const VoiceCreateModal = ({ open, onClose }: VoiceCreateModalProps) => {
   const {
     control,
     handleSubmit,

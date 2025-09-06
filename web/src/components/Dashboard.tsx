@@ -26,7 +26,8 @@ import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import { useState, useEffect } from "react";
 import { UserMenu } from "./Menu";
-import { CreateVoiceModal } from "./CreateVoiceModal";
+import { VoiceCreateModal } from "./VoiceCreateModal";
+import Image from "next/image";
 
 // ユーザーメニュー用のコンポーネント
 
@@ -73,18 +74,6 @@ export const Dashboard = () => {
     setVoicings(dummyVoicings);
   }, []);
 
-  const handleCreateVoice = (data: any) => {
-    const newVoice = {
-      id: voicings.length + 1,
-      summary: data.summary,
-      tags: data.tags,
-      sentiment: data.sentiment,
-      impact: data.impact,
-      date: new Date().toISOString().split('T')[0],
-    };
-    setVoicings([newVoice, ...voicings]);
-  };
-
   return (
     <Box sx={{ display: "flex" }}>
       {/* ヘッダー */}
@@ -92,12 +81,21 @@ export const Dashboard = () => {
         position="fixed"
         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
       >
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            PDM AI Agent
-          </Typography>
+        <Grid
+          container
+          justifyContent="space-between"
+          alignItems="center"
+          px={4}
+          py={1}
+        >
+          <Grid display="flex" alignItems="center" gap={1}>
+            <Image src="/logo.png" width={32} height={32} alt="pdm agent" />
+            <Typography fontWeight={700} fontSize={16}>
+              PDM AGENT
+            </Typography>
+          </Grid>
           <UserMenu />
-        </Toolbar>
+        </Grid>
       </AppBar>
 
       {/* メインコンテンツ */}
@@ -136,8 +134,8 @@ export const Dashboard = () => {
                 }}
               >
                 <Typography variant="h6">顧客の声 (VoC) 一覧</Typography>
-                <Button 
-                  variant="contained" 
+                <Button
+                  variant="contained"
                   startIcon={<AddIcon />}
                   onClick={() => setIsModalOpen(true)}
                 >
@@ -205,11 +203,10 @@ export const Dashboard = () => {
           </Card>
         </Container>
       </Box>
-      
-      <CreateVoiceModal
+
+      <VoiceCreateModal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleCreateVoice}
       />
     </Box>
   );

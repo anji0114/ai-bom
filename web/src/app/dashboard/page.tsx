@@ -1,11 +1,11 @@
-import { AuthGuard } from "@/components/AuthGuard";
+import { AuthProvider } from "@/components/provider/AuthProvider";
 import { Dashboard } from "@/components/Dashboard";
 
 const DashboardPage = () => {
   return (
-    <AuthGuard>
+    <AuthProvider>
       <Dashboard />
-    </AuthGuard>
+    </AuthProvider>
   );
 };
 

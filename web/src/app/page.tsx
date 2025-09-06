@@ -1,6 +1,6 @@
 import { Box, Container, Typography, Stack } from "@mui/material";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
-import { LoginButton } from "@/components/ui/LoginButton";
+import { LoginButton } from "@/components/LoginButton";
 
 const TopPage = () => {
   return (

@@ -14,11 +14,9 @@ export const LoginButton = () => {
       size="large"
       startIcon={<GoogleIcon />}
       sx={{
-        textTransform: "none",
-        fontSize: "1.1rem",
-        px: 4,
+        fontWeight: 700,
         py: 1.5,
-        borderRadius: "50px",
+        px: 4,
       }}
     >
       Googleでログイン / 新規登録

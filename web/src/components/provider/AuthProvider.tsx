@@ -6,7 +6,7 @@ import { useQuery } from "@apollo/client/react";
 import { graphql, useFragment } from "@/gql";
 import { GetmeDocument } from "@/gql/graphql";
 import { useRouter } from "next/navigation";
-import { Loading } from "./ui/Loading";
+import { Loading } from "@/components/ui/Loading";
 
 graphql(`
   query Getme {
@@ -22,7 +22,7 @@ const fragment = graphql(`
   }
 `);
 
-export const AuthGuard = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isMounted, setIsMounted] = useState(false);
   const { data, loading, error } = useQuery(GetmeDocument, {
     pollInterval: 60 * 60 * 1000,
