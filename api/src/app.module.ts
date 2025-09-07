@@ -17,6 +17,7 @@ import { VoicingModule } from './voicing/voicing.module';
       playground: false,
       sortSchema: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      context: ({ req, res }) => ({ req, res }),
     }),
     PrismaModule,
     AuthModule,

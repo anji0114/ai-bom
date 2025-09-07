@@ -7,6 +7,8 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import Logout from "@mui/icons-material/Logout";
+import { useLogout } from "@/hooks/useLogout";
+import { useRouter } from "next/navigation";
 
 export const UserMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -14,6 +16,8 @@ export const UserMenu = () => {
   const handleClick = (event: React.MouseEvent<HTMLElement>) =>
     setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
+  const { logout } = useLogout();
+  const router = useRouter();
 
   return (
     <>
@@ -24,6 +28,12 @@ export const UserMenu = () => {
         <MenuItem
           onClick={() => {
             /* ログアウト処理 */
+            logout({
+              onCompleted: () => {
+                handleClose();
+                router.push("/");
+              },
+            });
           }}
         >
           <ListItemIcon>

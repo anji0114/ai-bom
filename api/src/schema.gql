@@ -19,6 +19,8 @@ type Mutation {
 
 type Query {
   getMe: User
+  getVoicing(id: String!): Voicing
+  getVoicings: [Voicing!]!
 }
 
 enum Sentiment {

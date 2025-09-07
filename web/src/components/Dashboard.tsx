@@ -13,66 +13,42 @@ import {
   TextField,
   InputAdornment,
   Table,
-  TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Chip,
+  TableBody,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
-import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
-import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { UserMenu } from "./Menu";
 import { VoiceCreateModal } from "./VoiceCreateModal";
 import Image from "next/image";
+import { graphql, useFragment } from "@/gql";
+import { useQuery } from "@apollo/client/react";
+import { GetVoicingsDocument } from "@/gql/graphql";
+import { VoiceItem } from "./VoiceItem";
 
-// ユーザーメニュー用のコンポーネント
+graphql(`
+  query GetVoicings {
+    getVoicings {
+      ...VoiceList
+    }
+  }
+`);
+
+const fragment = graphql(`
+  fragment VoiceList on Voicing {
+    id
+    ...VoiceInfo
+  }
+`);
 
 export const Dashboard = () => {
-  const [voicings, setVoicings] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    // ダミーデータ。実際にはAPIから取得します。
-    const dummyVoicings = [
-      {
-        id: 1,
-        summary: "ログイン画面のデザインが古い",
-        tags: ["UI/UX改善"],
-        sentiment: "NEUTRAL",
-        impact: 2,
-        date: "2024-08-15",
-      },
-      {
-        id: 2,
-        summary: "もっと安いプランが欲しい",
-        tags: ["料金・プラン"],
-        sentiment: "NEGATIVE",
-        impact: 3,
-        date: "2024-08-14",
-      },
-      {
-        id: 3,
-        summary: "ファイルアップロード機能が欲しい",
-        tags: ["機能要望"],
-        sentiment: "POSITIVE",
-        impact: 2,
-        date: "2024-08-14",
-      },
-      {
-        id: 4,
-        summary: "時々動作が重くなる",
-        tags: ["不具合報告", "パフォーマンス"],
-        sentiment: "NEGATIVE",
-        impact: 3,
-        date: "2024-08-13",
-      },
-    ];
-    setVoicings(dummyVoicings);
-  }, []);
+  const { data } = useQuery(GetVoicingsDocument);
+  const voicings = useFragment(fragment, data?.getVoicings);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -169,36 +145,13 @@ export const Dashboard = () => {
                   <TableCell>受信日</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {voicings.map((voc) => (
-                  <TableRow hover key={voc.id} sx={{ cursor: "pointer" }}>
-                    <TableCell>{voc.summary}</TableCell>
-                    <TableCell>
-                      {voc.tags.map((tag: string) => (
-                        <Chip
-                          key={tag}
-                          label={tag}
-                          size="small"
-                          sx={{ mr: 0.5 }}
-                        />
-                      ))}
-                    </TableCell>
-                    <TableCell>
-                      {voc.sentiment === "POSITIVE" && (
-                        <SentimentSatisfiedAltIcon color="success" />
-                      )}
-                      {voc.sentiment === "NEUTRAL" && (
-                        <SentimentNeutralIcon color="action" />
-                      )}
-                      {voc.sentiment === "NEGATIVE" && (
-                        <SentimentVeryDissatisfiedIcon color="error" />
-                      )}
-                    </TableCell>
-                    <TableCell>{"★".repeat(voc.impact)}</TableCell>
-                    <TableCell>{voc.date}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+              {voicings && (
+                <TableBody>
+                  {voicings.map((voicing) => (
+                    <VoiceItem key={voicing.id} voicing={voicing} />
+                  ))}
+                </TableBody>
+              )}
             </Table>
           </Card>
         </Container>

@@ -14,14 +14,22 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n  query GetVoicings {\n    getVoicings {\n      ...VoiceList\n    }\n  }\n": typeof types.GetVoicingsDocument,
+    "\n  fragment VoiceList on Voicing {\n    id\n    ...VoiceInfo\n  }\n": typeof types.VoiceListFragmentDoc,
     "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateVoicingDocument,
+    "\n  fragment VoiceInfo on Voicing {\n    id\n    content\n    source\n    createdAt\n    summary\n    sentiment\n    impactScore\n    tags {\n      id\n      name\n    }\n  }\n": typeof types.VoiceInfoFragmentDoc,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": typeof types.GetmeDocument,
     "\n  fragment Me on User {\n    id\n  }\n": typeof types.MeFragmentDoc,
+    "\n  mutation Logout {\n    logout\n  }\n": typeof types.LogoutDocument,
 };
 const documents: Documents = {
+    "\n  query GetVoicings {\n    getVoicings {\n      ...VoiceList\n    }\n  }\n": types.GetVoicingsDocument,
+    "\n  fragment VoiceList on Voicing {\n    id\n    ...VoiceInfo\n  }\n": types.VoiceListFragmentDoc,
     "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n": types.CreateVoicingDocument,
+    "\n  fragment VoiceInfo on Voicing {\n    id\n    content\n    source\n    createdAt\n    summary\n    sentiment\n    impactScore\n    tags {\n      id\n      name\n    }\n  }\n": types.VoiceInfoFragmentDoc,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": types.GetmeDocument,
     "\n  fragment Me on User {\n    id\n  }\n": types.MeFragmentDoc,
+    "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
 };
 
 /**
@@ -41,7 +49,19 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  query GetVoicings {\n    getVoicings {\n      ...VoiceList\n    }\n  }\n"): (typeof documents)["\n  query GetVoicings {\n    getVoicings {\n      ...VoiceList\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment VoiceList on Voicing {\n    id\n    ...VoiceInfo\n  }\n"): (typeof documents)["\n  fragment VoiceList on Voicing {\n    id\n    ...VoiceInfo\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment VoiceInfo on Voicing {\n    id\n    content\n    source\n    createdAt\n    summary\n    sentiment\n    impactScore\n    tags {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  fragment VoiceInfo on Voicing {\n    id\n    content\n    source\n    createdAt\n    summary\n    sentiment\n    impactScore\n    tags {\n      id\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -50,6 +70,10 @@ export function graphql(source: "\n  query Getme {\n    getMe {\n      ...Me\n  
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  fragment Me on User {\n    id\n  }\n"): (typeof documents)["\n  fragment Me on User {\n    id\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation Logout {\n    logout\n  }\n"): (typeof documents)["\n  mutation Logout {\n    logout\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

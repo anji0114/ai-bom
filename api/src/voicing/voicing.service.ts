@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateVoicingInput } from './dto/create-voicing.input';
 
@@ -19,6 +23,38 @@ export class VoicingService {
             tag: true,
           },
         },
+      },
+    });
+  }
+
+  async findOne(id: string, userId: string) {
+    const voicing = await this.prisma.voicing.findUnique({
+      where: { id },
+      include: {
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
+    });
+
+    if (!voicing) {
+      throw new NotFoundException('指定されたVoCが見つかりません');
+    }
+
+    if (voicing.userId !== userId) {
+      throw new ForbiddenException('他のユーザーのVoCにはアクセスできません');
+    }
+
+    return voicing;
+  }
+
+  async findMany(userId: string) {
+    return this.prisma.voicing.findMany({
+      where: { userId },
+      include: {
+        tags: { include: { tag: true } },
       },
     });
   }

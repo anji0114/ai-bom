@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { VoicingService } from './voicing.service';
 import { Voicing } from './entities/voicing.entity';
@@ -17,5 +17,18 @@ export class VoicingResolver {
     @CurrentUser() user: { id: string },
   ) {
     return this.voicingService.create(user.id, input);
+  }
+
+  @Query(() => Voicing, { nullable: true })
+  async getVoicing(
+    @Args('id') id: string,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.voicingService.findOne(id, user.id);
+  }
+
+  @Query(() => [Voicing])
+  async getVoicings(@CurrentUser() user: { id: string }) {
+    return this.voicingService.findMany(user.id);
   }
 }
