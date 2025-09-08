@@ -3,11 +3,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
-import { AppService } from './modules/app/app.service';
-import { AppController } from './modules/app/app.controller';
-import { PrismaModule } from './prisma/prisma.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { VoicingModule } from './voicing/voicing.module';
+import { AppService } from '@/modules/app/app.service';
+import { AppController } from '@/modules/app/app.controller';
+import { PrismaModule } from '@/prisma/prisma.module';
+import { AuthModule } from '@/modules/auth/auth.module';
+import { VoicingModule } from '@/modules/voicing/voicing.module';
 
 @Module({
   imports: [
@@ -17,7 +17,10 @@ import { VoicingModule } from './voicing/voicing.module';
       playground: false,
       sortSchema: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      context: ({ req, res }) => ({ req, res }),
+      context: ({ req, res }: { req: Request; res: Response }) => ({
+        req,
+        res,
+      }),
     }),
     PrismaModule,
     AuthModule,

@@ -1,5 +1,4 @@
-import { graphql, useFragment } from "@/gql";
-import { VoiceInfoFragment } from "@/gql/graphql";
+import { FragmentType, graphql, useFragment } from "@/gql";
 import { Chip, TableCell, TableRow } from "@mui/material";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
@@ -22,16 +21,11 @@ const fragment = graphql(`
 `);
 
 type Props = {
-  voicing: {
-    readonly ' $fragmentRefs'?: {
-      readonly VoiceInfoFragment: VoiceInfoFragment;
-    };
-  };
+  voicing: FragmentType<typeof fragment>;
 };
 
 export const VoiceItem = ({ voicing: _voicing }: Props) => {
   const voicing = useFragment(fragment, _voicing);
-
   const renderSentiment = () => {
     switch (voicing.sentiment) {
       case "POSITIVE":
@@ -61,7 +55,7 @@ export const VoiceItem = ({ voicing: _voicing }: Props) => {
       <TableCell>{renderSentiment()}</TableCell>
       <TableCell>{renderImpact()}</TableCell>
       <TableCell>
-        {new Date(voicing.createdAt).toLocaleDateString('ja-JP')}
+        {new Date(voicing.createdAt).toLocaleDateString("ja-JP")}
       </TableCell>
     </TableRow>
   );

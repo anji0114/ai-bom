@@ -3,8 +3,8 @@ import { UseGuards } from '@nestjs/common';
 import { VoicingService } from './voicing.service';
 import { Voicing } from './entities/voicing.entity';
 import { CreateVoicingInput } from './dto/create-voicing.input';
-import { CurrentUser } from '../modules/auth/decorators/current-user.decorator';
-import { GqlAuthGuard } from '../modules/auth/guards/gql-auth.guard';
+import { CurrentUser } from '@/modules/auth/decorators/current-user.decorator';
+import { GqlAuthGuard } from '@/modules/auth/guards/gql-auth.guard';
 
 @Resolver(() => Voicing)
 @UseGuards(GqlAuthGuard)

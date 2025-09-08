@@ -25,6 +25,8 @@
   },
   "dependencies": {
     "@apollo/server": "4.12.2",
+    "@langchain/anthropic": "^0.3.27",
+    "@langchain/core": "^0.3.75",
     "@nestjs/apollo": "^13.1.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
@@ -36,10 +38,12 @@
     "class-validator": "^0.14.2",
     "cookie-parser": "^1.4.7",
     "graphql": "^16.11.0",
+    "langchain": "^0.3.33",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
