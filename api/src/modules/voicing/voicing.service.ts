@@ -100,7 +100,7 @@ export class VoicingService {
     return voicing;
   }
 
-  async findMany(userId: string) {
+  async getVoicings(userId: string) {
     const voicings = await this.prisma.voicing.findMany({
       where: { userId },
       include: {
@@ -108,9 +108,14 @@ export class VoicingService {
       },
     });
 
-    return voicings.map((voicing) => ({
-      ...voicing,
-      tags: voicing.tags.map((vt) => vt.tag),
-    }));
+    const total = await this.prisma.voicing.count({ where: { userId } });
+
+    return {
+      data: voicings.map((voicing) => ({
+        ...voicing,
+        tags: voicing.tags.map((vt) => vt.tag),
+      })),
+      total,
+    };
   }
 }

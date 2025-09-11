@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { VoicingService } from './voicing.service';
-import { Voicing } from './entities/voicing.entity';
+import { Voicing, VoicingConnection } from './entities/voicing.entity';
 import { CreateVoicingInput } from './dto/create-voicing.input';
 import { CurrentUser } from '@/modules/auth/decorators/current-user.decorator';
 import { GqlAuthGuard } from '@/modules/auth/guards/gql-auth.guard';
@@ -27,8 +27,13 @@ export class VoicingResolver {
     return this.voicingService.findOne(id, user.id);
   }
 
-  @Query(() => [Voicing])
+  @Query(() => VoicingConnection)
   async getVoicings(@CurrentUser() user: { id: string }) {
-    return this.voicingService.findMany(user.id);
+    const { data, total } = await this.voicingService.getVoicings(user.id);
+
+    return {
+      data,
+      total,
+    };
   }
 }

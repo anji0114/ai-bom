@@ -33,22 +33,28 @@ import { VoiceItem } from "./VoiceItem";
 graphql(`
   query GetVoicings {
     getVoicings {
-      ...VoiceList
+      ...VoicingConnection
     }
   }
 `);
 
-const fragment = graphql(`
-  fragment VoiceList on Voicing {
-    id
-    ...VoiceInfo
+const voicingConnectionFragment = graphql(`
+  fragment VoicingConnection on VoicingConnection {
+    data {
+      id
+      ...VoiceInfo
+    }
+    total
   }
 `);
 
 export const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data } = useQuery(GetVoicingsDocument);
-  const voicings = useFragment(fragment, data?.getVoicings);
+  const voicingConnection = useFragment(
+    voicingConnectionFragment,
+    data?.getVoicings
+  );
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -91,7 +97,9 @@ export const Dashboard = () => {
               <Card>
                 <CardContent>
                   <Typography color="text.secondary">VoC総数</Typography>
-                  <Typography variant="h5">58</Typography>
+                  <Typography variant="h5">
+                    {voicingConnection?.total}
+                  </Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -145,9 +153,9 @@ export const Dashboard = () => {
                   <TableCell>受信日</TableCell>
                 </TableRow>
               </TableHead>
-              {voicings && (
+              {voicingConnection?.data && (
                 <TableBody>
-                  {voicings.map((voicing) => (
+                  {voicingConnection.data.map((voicing) => (
                     <VoiceItem key={voicing.id} voicing={voicing} />
                   ))}
                 </TableBody>

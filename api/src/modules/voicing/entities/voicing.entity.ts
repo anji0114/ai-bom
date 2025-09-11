@@ -46,3 +46,12 @@ export class Voicing {
   @Field()
   updatedAt: Date;
 }
+
+@ObjectType()
+export class VoicingConnection {
+  @Field(() => [Voicing])
+  data: Voicing[];
+
+  @Field(() => Int)
+  total: number;
+}

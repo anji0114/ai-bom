@@ -14,8 +14,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n  query GetVoicings {\n    getVoicings {\n      ...VoiceList\n    }\n  }\n": typeof types.GetVoicingsDocument,
-    "\n  fragment VoiceList on Voicing {\n    id\n    ...VoiceInfo\n  }\n": typeof types.VoiceListFragmentDoc,
+    "\n  query GetVoicings {\n    getVoicings {\n      ...VoicingConnection\n    }\n  }\n": typeof types.GetVoicingsDocument,
+    "\n  fragment VoicingConnection on VoicingConnection {\n    data {\n      id\n      ...VoiceInfo\n    }\n    total\n  }\n": typeof types.VoicingConnectionFragmentDoc,
     "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateVoicingDocument,
     "\n  fragment VoiceInfo on Voicing {\n    id\n    content\n    source\n    createdAt\n    summary\n    sentiment\n    impactScore\n    tags {\n      id\n      name\n    }\n  }\n": typeof types.VoiceInfoFragmentDoc,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": typeof types.GetmeDocument,
@@ -23,8 +23,8 @@ type Documents = {
     "\n  mutation Logout {\n    logout\n  }\n": typeof types.LogoutDocument,
 };
 const documents: Documents = {
-    "\n  query GetVoicings {\n    getVoicings {\n      ...VoiceList\n    }\n  }\n": types.GetVoicingsDocument,
-    "\n  fragment VoiceList on Voicing {\n    id\n    ...VoiceInfo\n  }\n": types.VoiceListFragmentDoc,
+    "\n  query GetVoicings {\n    getVoicings {\n      ...VoicingConnection\n    }\n  }\n": types.GetVoicingsDocument,
+    "\n  fragment VoicingConnection on VoicingConnection {\n    data {\n      id\n      ...VoiceInfo\n    }\n    total\n  }\n": types.VoicingConnectionFragmentDoc,
     "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n": types.CreateVoicingDocument,
     "\n  fragment VoiceInfo on Voicing {\n    id\n    content\n    source\n    createdAt\n    summary\n    sentiment\n    impactScore\n    tags {\n      id\n      name\n    }\n  }\n": types.VoiceInfoFragmentDoc,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": types.GetmeDocument,
@@ -49,11 +49,11 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetVoicings {\n    getVoicings {\n      ...VoiceList\n    }\n  }\n"): (typeof documents)["\n  query GetVoicings {\n    getVoicings {\n      ...VoiceList\n    }\n  }\n"];
+export function graphql(source: "\n  query GetVoicings {\n    getVoicings {\n      ...VoicingConnection\n    }\n  }\n"): (typeof documents)["\n  query GetVoicings {\n    getVoicings {\n      ...VoicingConnection\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment VoiceList on Voicing {\n    id\n    ...VoiceInfo\n  }\n"): (typeof documents)["\n  fragment VoiceList on Voicing {\n    id\n    ...VoiceInfo\n  }\n"];
+export function graphql(source: "\n  fragment VoicingConnection on VoicingConnection {\n    data {\n      id\n      ...VoiceInfo\n    }\n    total\n  }\n"): (typeof documents)["\n  fragment VoicingConnection on VoicingConnection {\n    data {\n      id\n      ...VoiceInfo\n    }\n    total\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

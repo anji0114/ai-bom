@@ -20,7 +20,7 @@ type Mutation {
 type Query {
   getMe: User
   getVoicing(id: String!): Voicing
-  getVoicings: [Voicing!]!
+  getVoicings: VoicingConnection!
 }
 
 enum Sentiment {
@@ -52,4 +52,9 @@ type Voicing {
   summary: String
   tags: [Tag!]!
   updatedAt: DateTime!
+}
+
+type VoicingConnection {
+  data: [Voicing!]!
+  total: Int!
 }
