@@ -4,6 +4,7 @@
 
 input CreateVoicingInput {
   content: String!
+  productId: String!
   source: String!
 }
 
@@ -12,6 +13,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input GetVoicingsInput {
+  productId: String!
+}
+
 type Mutation {
   createVoicing(input: CreateVoicingInput!): Voicing!
   logout: Boolean!
@@ -19,14 +24,7 @@ type Mutation {
 
 type Query {
   getMe: User
-  getVoicing(id: String!): Voicing
-  getVoicings: VoicingConnection!
-}
-
-enum Sentiment {
-  NEGATIVE
-  NEUTRAL
-  POSITIVE
+  getVoicings(input: GetVoicingsInput!): VoicingConnection!
 }
 
 type Tag {
@@ -47,7 +45,6 @@ type Voicing {
   createdAt: DateTime!
   id: ID!
   impactScore: Int
-  sentiment: Sentiment
   source: String!
   summary: String
   tags: [Tag!]!

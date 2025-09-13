@@ -1,11 +1,7 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { AiService } from '@/ai/ai.service';
-import { CreateVoicingInput } from './dto/create-voicing.input';
+import { CreateVoicingInput } from './dto/voicing.input';
 
 @Injectable()
 export class VoicingService {
@@ -14,17 +10,24 @@ export class VoicingService {
     private aiService: AiService,
   ) {}
 
-  async create(input: CreateVoicingInput) {
+  async create(userId: string, input: CreateVoicingInput) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: input.productId, userId },
+    });
+
+    if (!product) {
+      throw new NotFoundException('指定されたプロダクトが見つかりません');
+    }
+
     const analysisResult = await this.aiService.analyzeVoC(input.content);
 
     // VoCを保存（AI分析結果も含む）
     const voicing = await this.prisma.voicing.create({
       data: {
-        productId: input.productId,
+        productId: product.id,
         content: input.content,
         source: input.source,
         summary: analysisResult.summary,
-        sentiment: analysisResult.sentiment,
         impactScore: analysisResult.impactScore,
       },
     });
@@ -77,38 +80,23 @@ export class VoicingService {
     };
   }
 
-  async findOne(id: string, userId: string) {
-    const voicing = await this.prisma.voicing.findUnique({
-      where: { id },
-      include: {
-        tags: {
-          include: {
-            tag: true,
-          },
-        },
-      },
+  async getVoicings(productId: string, userId: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId, userId },
     });
 
-    if (!voicing) {
-      throw new NotFoundException('指定されたVoCが見つかりません');
+    if (!product) {
+      throw new NotFoundException('指定されたプロダクトが見つかりません');
     }
 
-    if (voicing.userId !== userId) {
-      throw new ForbiddenException('他のユーザーのVoCにはアクセスできません');
-    }
-
-    return voicing;
-  }
-
-  async getVoicings(userId: string) {
     const voicings = await this.prisma.voicing.findMany({
-      where: { userId },
+      where: { productId: product.id },
       include: {
         tags: { include: { tag: true } },
       },
     });
 
-    const total = await this.prisma.voicing.count({ where: { userId } });
+    const total = await this.prisma.voicing.count({ where: { productId: '' } });
 
     return {
       data: voicings.map((voicing) => ({
