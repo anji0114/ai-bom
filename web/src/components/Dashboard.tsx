@@ -29,6 +29,7 @@ import { graphql, useFragment } from "@/gql";
 import { useQuery } from "@apollo/client/react";
 import { GetVoicingsDocument } from "@/gql/graphql";
 import { VoiceItem } from "./VoiceItem";
+import { robotoFonts } from "@/lib/theme";
 
 graphql(`
   query GetVoicings {
@@ -61,7 +62,13 @@ export const Dashboard = () => {
       {/* ヘッダー */}
       <AppBar
         position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        color="transparent"
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          boxShadow: "none",
+          borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
+          backgroundColor: "#fff",
+        }}
       >
         <Grid
           container
@@ -70,9 +77,15 @@ export const Dashboard = () => {
           px={4}
           py={1}
         >
-          <Grid display="flex" alignItems="center" gap={1}>
-            <Image src="/logo.png" width={32} height={32} alt="pdm agent" />
-            <Typography fontWeight={700} fontSize={16}>
+          <Grid display="flex" alignItems="center" gap={0.5}>
+            <Image src="/logo.png" width={24} height={22} alt="pdm agent" />
+            <Typography
+              variant="caption"
+              color="primary"
+              component="span"
+              fontWeight={700}
+              fontFamily={robotoFonts}
+            >
               PDM AGENT
             </Typography>
           </Grid>
@@ -94,9 +107,13 @@ export const Dashboard = () => {
           {/* サマリーエリア */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid size={12}>
-              <Card>
-                <CardContent>
-                  <Typography color="text.secondary">VoC総数</Typography>
+              <Card variant="outlined">
+                <CardContent
+                  sx={{ display: "flex", gap: 2, alignItems: "center" }}
+                >
+                  <Typography color="text.secondary" pt={0.5}>
+                    VoC総数
+                  </Typography>
                   <Typography variant="h5">
                     {voicingConnection?.total}
                   </Typography>
@@ -107,7 +124,7 @@ export const Dashboard = () => {
           </Grid>
 
           {/* VoC一覧エリア */}
-          <Card>
+          <Card variant="outlined">
             <CardContent>
               <Box
                 sx={{

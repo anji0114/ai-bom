@@ -14,13 +14,13 @@ export class VoicingService {
     private aiService: AiService,
   ) {}
 
-  async create(userId: string, input: CreateVoicingInput) {
+  async create(input: CreateVoicingInput) {
     const analysisResult = await this.aiService.analyzeVoC(input.content);
 
     // VoCを保存（AI分析結果も含む）
     const voicing = await this.prisma.voicing.create({
       data: {
-        userId,
+        productId: input.productId,
         content: input.content,
         source: input.source,
         summary: analysisResult.summary,

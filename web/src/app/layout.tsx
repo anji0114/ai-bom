@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_JP } from "next/font/google";
+import { Noto_Sans_JP, Roboto } from "next/font/google";
 import { Provider } from "@/components/provider/Provider";
 
 const notoSans = Noto_Sans_JP({
@@ -7,7 +7,12 @@ const notoSans = Noto_Sans_JP({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = { title: "PDM Agent" };
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = { title: "PDM AGENT" };
 
 export default function RootLayout({
   children,
@@ -17,9 +22,9 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
-        <link rel="icon" href="/logo.png" />
+        <link rel="icon" href="/icon.png" />
       </head>
-      <body className={`${notoSans.variable}`}>
+      <body className={`${notoSans.variable} ${roboto.variable}`}>
         <Provider>{children}</Provider>
       </body>
     </html>

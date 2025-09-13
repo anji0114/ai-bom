@@ -1,9 +1,4 @@
-import { ObjectType, Field, ID, Int, registerEnumType } from '@nestjs/graphql';
-import { Sentiment } from '@prisma/client';
-
-registerEnumType(Sentiment, {
-  name: 'Sentiment',
-});
+import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class Tag {
@@ -30,9 +25,6 @@ export class Voicing {
 
   @Field({ nullable: true })
   summary?: string;
-
-  @Field(() => Sentiment, { nullable: true })
-  sentiment?: Sentiment;
 
   @Field(() => Int, { nullable: true })
   impactScore?: number;
