@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateProductInput {
+  content: String
+  description: String
+  name: String!
+}
+
 input CreateVoicingInput {
   content: String!
   productId: String!
@@ -18,12 +24,30 @@ input GetVoicingsInput {
 }
 
 type Mutation {
+  createProduct(input: CreateProductInput!): Product!
   createVoicing(input: CreateVoicingInput!): Voicing!
   logout: Boolean!
 }
 
+type Product {
+  content: String
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  name: String!
+  updatedAt: DateTime!
+  userId: String!
+}
+
+type ProductConnection {
+  data: [Product!]!
+  total: Float!
+}
+
 type Query {
   getMe: User
+  getProduct(id: String!): Product
+  getProducts: ProductConnection!
   getVoicings(input: GetVoicingsInput!): VoicingConnection!
 }
 

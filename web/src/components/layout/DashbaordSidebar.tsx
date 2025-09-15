@@ -15,14 +15,13 @@ import {
   Analytics,
   Chat,
   Dashboard,
-  Edit,
-  Inventory,
   ListAlt,
   Map,
   Settings,
-  ShoppingCart,
 } from "@mui/icons-material";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const ICON_SIDEBAR_WIDTH = 240;
 
@@ -85,6 +84,8 @@ export const DashbaordSidebar = () => {
               color: (theme) => theme.palette.common.white,
               border: (theme) => `1px dashed ${theme.palette.common.white}`,
             }}
+            href="/dashboard/products/new"
+            component={Link}
           >
             <Add />
           </IconButton>
@@ -129,11 +130,13 @@ const MENU_ITEMS = [
 ];
 
 const DashboardSidebarMenu = () => {
+  const pathname = usePathname();
+
   return (
     <Box
       sx={{
         flex: 1,
-        mt: "46px",
+        mt: "48px",
         backgroundColor: (theme) => theme.palette.grey[50],
         borderTopLeftRadius: 8,
       }}
@@ -162,6 +165,8 @@ const DashboardSidebarMenu = () => {
               sx={{
                 color: (theme) => theme.palette.text.primary,
                 justifyContent: "flex-start",
+                backgroundColor: (theme) =>
+                  item.href === pathname ? theme.palette.grey[200] : undefined,
               }}
               startIcon={item.icon}
             >

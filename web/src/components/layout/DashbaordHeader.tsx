@@ -1,7 +1,6 @@
 import { robotoFonts } from "@/lib/theme";
 import { AppBar, Grid, Link, Typography } from "@mui/material";
 import Image from "next/image";
-import { DashbaordUserMenu } from "./DashbaordUserMenu";
 
 export const DashbaordHeader = () => {
   return (
@@ -19,7 +18,7 @@ export const DashbaordHeader = () => {
         alignItems="center"
         pr={4}
         pl={1.5}
-        py="2px"
+        height="48px"
       >
         <Grid display="flex" alignItems="center" gap={0.5}>
           <Link href="/dashboard">
@@ -35,7 +34,6 @@ export const DashbaordHeader = () => {
             PDM AGENT
           </Typography>
         </Grid>
-        <DashbaordUserMenu />
       </Grid>
     </AppBar>
   );
