@@ -30,6 +30,7 @@ type VoiceFormData = z.infer<typeof voiceSchema>;
 interface VoiceCreateModalProps {
   open: boolean;
   onClose: () => void;
+  productId: string;
 }
 
 const CREATE_VOICING_MUTATION = graphql(`
@@ -40,7 +41,11 @@ const CREATE_VOICING_MUTATION = graphql(`
   }
 `);
 
-export const VoiceCreateModal = ({ open, onClose }: VoiceCreateModalProps) => {
+export const VoiceCreateModal = ({
+  open,
+  onClose,
+  productId,
+}: VoiceCreateModalProps) => {
   const {
     control,
     handleSubmit,
@@ -57,7 +62,11 @@ export const VoiceCreateModal = ({ open, onClose }: VoiceCreateModalProps) => {
   const [createVoicing] = useMutation(CREATE_VOICING_MUTATION);
 
   const handleFormSubmit = (data: VoiceFormData) => {
-    createVoicing({ variables: { input: { ...data, source: "web" } } });
+    createVoicing({
+      variables: {
+        input: { ...data, source: "web", productId },
+      },
+    });
     reset();
     onClose();
   };

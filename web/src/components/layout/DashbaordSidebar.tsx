@@ -10,16 +10,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {
-  Add,
-  Analytics,
-  Chat,
-  Dashboard,
-  ListAlt,
-  Map,
-  Settings,
-} from "@mui/icons-material";
-import { useState } from "react";
+import { Add, Chat, Dashboard, ListAlt } from "@mui/icons-material";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAtom, useAtomValue } from "jotai";
@@ -133,11 +124,6 @@ const MENU_ITEMS = [
     icon: <Dashboard />,
   },
   {
-    label: "AI分析",
-    href: "/dashboard/ai-analysis",
-    icon: <Analytics />,
-  },
-  {
     label: "機能一覧",
     href: "/dashboard/features",
     icon: <ListAlt />,
@@ -146,16 +132,6 @@ const MENU_ITEMS = [
     label: "VoC一覧",
     href: "/dashboard/voc",
     icon: <Chat />,
-  },
-  {
-    label: "ロードマップ",
-    href: "/dashboard/roadmap",
-    icon: <Map />,
-  },
-  {
-    label: "設定",
-    href: "/dashboard/settings",
-    icon: <Settings />,
   },
 ];
 

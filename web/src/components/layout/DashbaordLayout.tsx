@@ -7,7 +7,7 @@ import { useGetProducts } from "@/hooks/useGetProducts";
 import { Loading } from "../ui/Loading";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import {
   currentProductAtom,
   getStoredProductId,
@@ -29,7 +29,7 @@ const DashbaordLayoutContent = ({
 }) => {
   const { products, loading, error } = useGetProducts();
   const router = useRouter();
-  const [currentProduct, setCurrentProduct] = useAtom(currentProductAtom);
+  const setCurrentProduct = useSetAtom(currentProductAtom);
 
   useEffect(() => {
     if (!loading && !error && !products?.length) {
