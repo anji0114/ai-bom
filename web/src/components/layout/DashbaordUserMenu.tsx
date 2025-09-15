@@ -10,7 +10,7 @@ import Logout from "@mui/icons-material/Logout";
 import { useLogout } from "@/hooks/useLogout";
 import { useRouter } from "next/navigation";
 
-export const UserMenu = () => {
+export const DashbaordUserMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) =>
