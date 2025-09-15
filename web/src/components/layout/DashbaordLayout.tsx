@@ -7,6 +7,12 @@ import { useGetProducts } from "@/hooks/useGetProducts";
 import { Loading } from "../ui/Loading";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAtom } from "jotai";
+import {
+  currentProductAtom,
+  getStoredProductId,
+  setStoredProductId,
+} from "@/atoms/productAtoms";
 
 export const DashbaordLayout = ({
   children,
@@ -23,6 +29,7 @@ const DashbaordLayoutContent = ({
 }) => {
   const { products, loading, error } = useGetProducts();
   const router = useRouter();
+  const [currentProduct, setCurrentProduct] = useAtom(currentProductAtom);
 
   useEffect(() => {
     if (!loading && !error && !products?.length) {
@@ -30,12 +37,32 @@ const DashbaordLayoutContent = ({
     }
   }, [products, loading, error, router]);
 
+  useEffect(() => {
+    if (!loading && products && products.length > 0) {
+      const storedProductId = getStoredProductId();
+
+      if (storedProductId) {
+        // 保存されているIDのプロダクトを探す
+        const storedProduct = products.find((p) => p.id === storedProductId);
+        if (storedProduct) {
+          setCurrentProduct(storedProduct);
+          return;
+        }
+      }
+
+      // 保存されているIDが見つからない場合は最初のプロダクトを選択
+      const firstProduct = products[0];
+      setCurrentProduct(firstProduct);
+      setStoredProductId(firstProduct.id);
+    }
+  }, [products, loading, setCurrentProduct]);
+
   if (loading || !products) return <Loading />;
 
   return (
     <Box sx={{ display: "flex", height: "100vh" }}>
       <DashbaordHeader />
-      <DashbaordSidebar />
+      <DashbaordSidebar products={products} />
       <Box
         component="main"
         sx={{

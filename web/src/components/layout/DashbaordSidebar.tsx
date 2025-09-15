@@ -22,23 +22,36 @@ import {
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useAtom, useAtomValue } from "jotai";
+import { currentProductAtom, setStoredProductId } from "@/atoms/productAtoms";
+import { Product, ProductFragmentFragment } from "@/gql/graphql";
+import { graphql } from "@/gql";
 
 const ICON_SIDEBAR_WIDTH = 240;
 
-const products = [
-  {
-    id: "inventory",
-    name: "プロジェクトA",
-  },
-  {
-    id: "orders",
-    name: "プロジェクトB",
-  },
-];
+graphql(`
+  fragment ProductFragment on Product {
+    id
+    name
+    description
+    content
+    createdAt
+    updatedAt
+    userId
+  }
+`);
 
-export const DashbaordSidebar = () => {
-  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
+type Props = {
+  products: ProductFragmentFragment[];
+};
+
+export const DashbaordSidebar = ({ products }: Props) => {
+  const [currentProduct, setCurrentProduct] = useAtom(currentProductAtom);
+
+  const handleSelectProduct = (product: Product) => {
+    setCurrentProduct(product);
+    setStoredProductId(product.id);
+  };
 
   return (
     <Drawer
@@ -63,7 +76,7 @@ export const DashbaordSidebar = () => {
             height: "100%",
           }}
         >
-          <List sx={{ px: 1, py: 2 }}>
+          <List sx={{ py: 2 }}>
             {products.map((product) => (
               <ListItem
                 key={product.id}
@@ -71,8 +84,25 @@ export const DashbaordSidebar = () => {
                 sx={{ mb: 1, display: "flex", justifyContent: "center" }}
               >
                 <Tooltip title={product.name} placement="right">
-                  <ButtonBase onClick={() => setSelectedProduct(product.id)}>
-                    <Avatar src={"/icon.png"} sx={{ width: 32, height: 32 }} />
+                  <ButtonBase
+                    onClick={() => handleSelectProduct(product)}
+                    sx={{
+                      border:
+                        currentProduct?.id === product.id
+                          ? "2px solid #fff"
+                          : "2px solid transparent",
+                      borderRadius: "50%",
+                      padding: "2px",
+                    }}
+                  >
+                    <Avatar
+                      sx={{
+                        width: 30,
+                        height: 30,
+                      }}
+                    >
+                      {product.name.charAt(0)}
+                    </Avatar>
                   </ButtonBase>
                 </Tooltip>
               </ListItem>
@@ -131,6 +161,7 @@ const MENU_ITEMS = [
 
 const DashboardSidebarMenu = () => {
   const pathname = usePathname();
+  const currentProduct = useAtomValue(currentProductAtom);
 
   return (
     <Box
@@ -149,10 +180,13 @@ const DashboardSidebarMenu = () => {
         }}
       >
         <Typography variant="body2" fontWeight={700}>
-          プロジェクトA
+          {currentProduct?.name}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          最終更新: 2025/09/15
+          最終更新:{" "}
+          {currentProduct?.updatedAt
+            ? new Date(currentProduct.updatedAt).toLocaleDateString()
+            : ""}
         </Typography>
       </Box>
       <List sx={{ px: 1, py: 2 }}>
@@ -169,6 +203,7 @@ const DashboardSidebarMenu = () => {
                   item.href === pathname ? theme.palette.grey[200] : undefined,
               }}
               startIcon={item.icon}
+              component={Link}
             >
               {item.label}
             </Button>

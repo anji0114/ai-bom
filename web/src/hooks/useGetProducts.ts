@@ -11,6 +11,7 @@ const GET_PRODUCTS_QUERY = graphql(`
         content
         createdAt
         updatedAt
+        userId
       }
       total
     }

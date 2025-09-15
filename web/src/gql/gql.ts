@@ -16,19 +16,21 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 type Documents = {
     "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateVoicingDocument,
     "\n  fragment VoiceInfo on Voicing {\n    id\n    content\n    source\n    createdAt\n    summary\n    impactScore\n    tags {\n      id\n      name\n    }\n  }\n": typeof types.VoiceInfoFragmentDoc,
+    "\n  fragment ProductFragment on Product {\n    id\n    name\n    description\n    content\n    createdAt\n    updatedAt\n    userId\n  }\n": typeof types.ProductFragmentFragmentDoc,
     "\n  mutation CreateProduct($input: CreateProductInput!) {\n    createProduct(input: $input) {\n      id\n      name\n      description\n      content\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.CreateProductDocument,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": typeof types.GetmeDocument,
     "\n  fragment Me on User {\n    id\n  }\n": typeof types.MeFragmentDoc,
-    "\n  query GetProducts {\n    getProducts {\n      data {\n        id\n        name\n        description\n        content\n        createdAt\n        updatedAt\n      }\n      total\n    }\n  }\n": typeof types.GetProductsDocument,
+    "\n  query GetProducts {\n    getProducts {\n      data {\n        id\n        name\n        description\n        content\n        createdAt\n        updatedAt\n        userId\n      }\n      total\n    }\n  }\n": typeof types.GetProductsDocument,
     "\n  mutation Logout {\n    logout\n  }\n": typeof types.LogoutDocument,
 };
 const documents: Documents = {
     "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n": types.CreateVoicingDocument,
     "\n  fragment VoiceInfo on Voicing {\n    id\n    content\n    source\n    createdAt\n    summary\n    impactScore\n    tags {\n      id\n      name\n    }\n  }\n": types.VoiceInfoFragmentDoc,
+    "\n  fragment ProductFragment on Product {\n    id\n    name\n    description\n    content\n    createdAt\n    updatedAt\n    userId\n  }\n": types.ProductFragmentFragmentDoc,
     "\n  mutation CreateProduct($input: CreateProductInput!) {\n    createProduct(input: $input) {\n      id\n      name\n      description\n      content\n      createdAt\n      updatedAt\n    }\n  }\n": types.CreateProductDocument,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": types.GetmeDocument,
     "\n  fragment Me on User {\n    id\n  }\n": types.MeFragmentDoc,
-    "\n  query GetProducts {\n    getProducts {\n      data {\n        id\n        name\n        description\n        content\n        createdAt\n        updatedAt\n      }\n      total\n    }\n  }\n": types.GetProductsDocument,
+    "\n  query GetProducts {\n    getProducts {\n      data {\n        id\n        name\n        description\n        content\n        createdAt\n        updatedAt\n        userId\n      }\n      total\n    }\n  }\n": types.GetProductsDocument,
     "\n  mutation Logout {\n    logout\n  }\n": types.LogoutDocument,
 };
 
@@ -57,6 +59,10 @@ export function graphql(source: "\n  fragment VoiceInfo on Voicing {\n    id\n  
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  fragment ProductFragment on Product {\n    id\n    name\n    description\n    content\n    createdAt\n    updatedAt\n    userId\n  }\n"): (typeof documents)["\n  fragment ProductFragment on Product {\n    id\n    name\n    description\n    content\n    createdAt\n    updatedAt\n    userId\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  mutation CreateProduct($input: CreateProductInput!) {\n    createProduct(input: $input) {\n      id\n      name\n      description\n      content\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  mutation CreateProduct($input: CreateProductInput!) {\n    createProduct(input: $input) {\n      id\n      name\n      description\n      content\n      createdAt\n      updatedAt\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -69,7 +75,7 @@ export function graphql(source: "\n  fragment Me on User {\n    id\n  }\n"): (ty
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetProducts {\n    getProducts {\n      data {\n        id\n        name\n        description\n        content\n        createdAt\n        updatedAt\n      }\n      total\n    }\n  }\n"): (typeof documents)["\n  query GetProducts {\n    getProducts {\n      data {\n        id\n        name\n        description\n        content\n        createdAt\n        updatedAt\n      }\n      total\n    }\n  }\n"];
+export function graphql(source: "\n  query GetProducts {\n    getProducts {\n      data {\n        id\n        name\n        description\n        content\n        createdAt\n        updatedAt\n        userId\n      }\n      total\n    }\n  }\n"): (typeof documents)["\n  query GetProducts {\n    getProducts {\n      data {\n        id\n        name\n        description\n        content\n        createdAt\n        updatedAt\n        userId\n      }\n      total\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
