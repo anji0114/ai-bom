@@ -1,6 +1,6 @@
 "use client";
 
-import { ProductNew } from "@/feature/products/components/ProductNew";
+import { ProductNew } from "@/features/products/components/ProductNew";
 
 const ProductsNewPage = () => {
   return <ProductNew />;

@@ -1,5 +1,5 @@
 import { DashbaordLayout } from "@/components/layout/DashbaordLayout";
-import { Dashboard } from "@/feature/dashbaord/components/Dashboard";
+import { Dashboard } from "@/features/dashbaord/components/Dashboard";
 
 const DashboardPage = () => {
   return (
