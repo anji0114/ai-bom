@@ -80,7 +80,7 @@ export class VoicingService {
     };
   }
 
-  async getVoicings(productId: string, userId: string) {
+  async getVoicings(userId: string, productId: string) {
     const product = await this.prisma.product.findUnique({
       where: { id: productId, userId },
     });
@@ -96,7 +96,7 @@ export class VoicingService {
       },
     });
 
-    const total = await this.prisma.voicing.count({ where: { productId: '' } });
+    const total = await this.prisma.voicing.count({ where: { productId } });
 
     return {
       data: voicings.map((voicing) => ({

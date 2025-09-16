@@ -1,4 +1,5 @@
 import { FragmentType, graphql, useFragment } from "@/gql";
+import { getRelativeTime } from "@/lib/date";
 import { Chip, TableCell, TableRow } from "@mui/material";
 
 const fragment = graphql(`
@@ -37,9 +38,7 @@ export const VoiceItem = ({ voicing: _voicing }: Props) => {
         ))}
       </TableCell>
       <TableCell>{renderImpact()}</TableCell>
-      <TableCell>
-        {new Date(voicing.createdAt).toLocaleDateString("ja-JP")}
-      </TableCell>
+      <TableCell>{getRelativeTime(voicing.createdAt)}</TableCell>
     </TableRow>
   );
 };

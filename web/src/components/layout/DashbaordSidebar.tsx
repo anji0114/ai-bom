@@ -15,13 +15,15 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAtom, useAtomValue } from "jotai";
 import { currentProductAtom, setStoredProductId } from "@/atoms/productAtoms";
-import { Product, ProductFragmentFragment } from "@/gql/graphql";
-import { graphql } from "@/gql";
+import { Product } from "@/gql/graphql";
+import { FragmentType, graphql, useFragment } from "@/gql";
+import { getRelativeTime } from "@/lib/date";
+import { FC } from "react";
 
 const ICON_SIDEBAR_WIDTH = 240;
 
-graphql(`
-  fragment ProductFragment on Product {
+const fragment = graphql(`
+  fragment DashbardSidebarFragment on Product {
     id
     name
     description
@@ -33,10 +35,11 @@ graphql(`
 `);
 
 type Props = {
-  products: ProductFragmentFragment[];
+  products: FragmentType<typeof fragment>[];
 };
 
-export const DashbaordSidebar = ({ products }: Props) => {
+export const DashbaordSidebar: FC<Props> = ({ products: _products }) => {
+  const products = useFragment(fragment, _products);
   const [currentProduct, setCurrentProduct] = useAtom(currentProductAtom);
 
   const handleSelectProduct = (product: Product) => {
@@ -161,7 +164,7 @@ const DashboardSidebarMenu = () => {
         <Typography variant="caption" color="text.secondary">
           最終更新:{" "}
           {currentProduct?.updatedAt
-            ? new Date(currentProduct.updatedAt).toLocaleDateString()
+            ? getRelativeTime(currentProduct.updatedAt)
             : ""}
         </Typography>
       </Box>

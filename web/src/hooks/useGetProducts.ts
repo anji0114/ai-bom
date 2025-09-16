@@ -1,17 +1,12 @@
 import { useQuery } from "@apollo/client/react";
 import { graphql } from "@/gql";
+import { GetProductsDocument } from "@/gql/graphql";
 
-const GET_PRODUCTS_QUERY = graphql(`
+graphql(`
   query GetProducts {
     getProducts {
       data {
-        id
-        name
-        description
-        content
-        createdAt
-        updatedAt
-        userId
+        ...DashbaordLayoutFragment
       }
       total
     }
@@ -19,9 +14,7 @@ const GET_PRODUCTS_QUERY = graphql(`
 `);
 
 export const useGetProducts = () => {
-  const { data, loading, error, refetch } = useQuery(GET_PRODUCTS_QUERY, {
-    fetchPolicy: "cache-first",
-  });
+  const { data, loading, error, refetch } = useQuery(GetProductsDocument);
 
   return {
     products: data?.getProducts.data,

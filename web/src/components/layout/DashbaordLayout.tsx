@@ -13,6 +13,7 @@ import {
   getStoredProductId,
   setStoredProductId,
 } from "@/atoms/productAtoms";
+import { graphql, useFragment } from "@/gql";
 
 export const DashbaordLayout = ({
   children,
@@ -22,12 +23,26 @@ export const DashbaordLayout = ({
   return <DashbaordLayoutContent>{children}</DashbaordLayoutContent>;
 };
 
+const fragment = graphql(`
+  fragment DashbaordLayoutFragment on Product {
+    id
+    name
+    description
+    content
+    createdAt
+    updatedAt
+    userId
+    ...DashbardSidebarFragment
+  }
+`);
+
 const DashbaordLayoutContent = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const { products, loading, error } = useGetProducts();
+  const { products: _products, loading, error } = useGetProducts();
+  const products = useFragment(fragment, _products);
   const router = useRouter();
   const setCurrentProduct = useSetAtom(currentProductAtom);
 

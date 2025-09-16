@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
@@ -39,6 +40,7 @@ const CREATE_PRODUCT_MUTATION = graphql(`
 `);
 
 export const ProductNew = () => {
+  const router = useRouter();
   const { products } = useGetProducts();
   const {
     control,
@@ -57,6 +59,7 @@ export const ProductNew = () => {
   const [createProduct] = useMutation(CREATE_PRODUCT_MUTATION, {
     onCompleted: () => {
       reset();
+      router.push("/dashboard");
     },
     refetchQueries: ["GetProducts"],
     awaitRefetchQueries: true,

@@ -1,9 +1,18 @@
+"use client";
+
+import { currentProductAtom } from "@/atoms/productAtoms";
+import { VocCreateModal } from "@/features/dashbaord/components/VocCreateModal";
 import { robotoFonts } from "@/lib/theme";
-import { AppBar, Grid, Typography } from "@mui/material";
+import { AppBar, Box, Button, Grid, Typography } from "@mui/material";
+import { useAtomValue } from "jotai";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export const DashbaordHeader = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const currentProduct = useAtomValue(currentProductAtom);
+
   return (
     <AppBar
       position="fixed"
@@ -35,7 +44,23 @@ export const DashbaordHeader = () => {
             PDM AGENT
           </Typography>
         </Grid>
+
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={() => setIsModalOpen(true)}
+        >
+          VOCを追加する
+        </Button>
       </Grid>
+      {currentProduct?.id && (
+        <VocCreateModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          productId={currentProduct?.id}
+        />
+      )}
     </AppBar>
   );
 };

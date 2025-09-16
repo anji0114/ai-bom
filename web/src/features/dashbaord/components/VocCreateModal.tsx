@@ -19,15 +19,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@apollo/client/react";
 import { graphql } from "@/gql";
+import { GetVoicingsDocument } from "@/gql/graphql";
 
-const voiceSchema = z.object({
+const vocSchema = z.object({
   content: z.string().min(1, "内容は必須です"),
   source: z.string().min(1, "ソースは必須です"),
 });
 
-type VoiceFormData = z.infer<typeof voiceSchema>;
+type VocFormData = z.infer<typeof vocSchema>;
 
-interface VoiceCreateModalProps {
+interface VocCreateModalProps {
   open: boolean;
   onClose: () => void;
   productId: string;
@@ -41,34 +42,46 @@ const CREATE_VOICING_MUTATION = graphql(`
   }
 `);
 
-export const VoiceCreateModal = ({
+export const VocCreateModal = ({
   open,
   onClose,
   productId,
-}: VoiceCreateModalProps) => {
+}: VocCreateModalProps) => {
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<VoiceFormData>({
-    resolver: zodResolver(voiceSchema),
+  } = useForm<VocFormData>({
+    resolver: zodResolver(vocSchema),
     defaultValues: {
       content: "",
       source: "",
     },
   });
 
-  const [createVoicing] = useMutation(CREATE_VOICING_MUTATION);
-
-  const handleFormSubmit = (data: VoiceFormData) => {
-    createVoicing({
-      variables: {
-        input: { ...data, source: "web", productId },
+  const [createVoicing] = useMutation(CREATE_VOICING_MUTATION, {
+    refetchQueries: [
+      {
+        query: GetVoicingsDocument,
+        variables: { input: { productId } },
       },
-    });
-    reset();
-    onClose();
+    ],
+    awaitRefetchQueries: true,
+  });
+
+  const handleFormSubmit = async (data: VocFormData) => {
+    try {
+      await createVoicing({
+        variables: {
+          input: { ...data, source: data.source, productId },
+        },
+      });
+      reset();
+      onClose();
+    } catch (error) {
+      console.error("VOC作成エラー:", error);
+    }
   };
 
   const handleClose = () => {
