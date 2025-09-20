@@ -6,7 +6,6 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { AppService } from '@/modules/app/app.service';
 import { AppController } from '@/modules/app/app.controller';
 import { PrismaModule } from '@/prisma/prisma.module';
-import { AuthModule } from '@/modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -22,7 +21,6 @@ import { AuthModule } from '@/modules/auth/auth.module';
       }),
     }),
     PrismaModule,
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
