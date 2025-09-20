@@ -1,71 +1,62 @@
-import { Box, Container, Typography, Stack } from "@mui/material";
-import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
-import { LoginButton } from "@/features/marketing/components/LoginButton";
+import { AddModerator, NewLabel } from "@mui/icons-material";
+import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import Image from "next/image";
 
 export const TopHero = () => {
   return (
     <Container component="main" maxWidth="md">
       <Box
         sx={{
-          marginTop: 8,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           textAlign: "center",
+          justifyContent: "center",
+          height: "100vh",
           py: 8,
         }}
       >
-        <RocketLaunchIcon sx={{ fontSize: 60, mb: 2, color: "primary.main" }} />
+        <Image
+          src="/logo.svg"
+          alt="X-Koutei Logo"
+          width={220}
+          height={60}
+          style={{ marginBottom: 16 }}
+        />
         <Typography
           component="h1"
-          variant="h2"
+          variant="h3"
           sx={{ fontWeight: "bold", mb: 2 }}
         >
-          顧客の声を、ビジネスの力に。
+          日本の町工場に、「つながる頭脳」を
         </Typography>
-        <Typography
-          variant="h5"
-          color="text.secondary"
-          sx={{ mb: 4, maxWidth: "700px" }}
-        >
-          PDM AI
-          Agentは、散らばった顧客からのフィードバック(VoC)をAIが自動で整理・分析。
-          プロダクトの次の一手を、データドリブンで導き出します。
+        <Typography color="text.secondary" sx={{ mb: 4, maxWidth: "700px" }}>
+          X-Koutei
+          は、中小・零細製造業が抱える情報の分断と属人化の課題を解決し、
+          <br />
+          AI
+          の力で世界に誇るものづくりを実現するための、製造業特化型コンサルティング
+          AI です。
         </Typography>
-        <LoginButton />
+        <Grid container spacing={2}>
+          <Button
+            variant="outlined"
+            size="large"
+            sx={{ width: "280px" }}
+            startIcon={<AddModerator />}
+          >
+            ログイン
+          </Button>
+          <Button
+            variant="contained"
+            size="large"
+            sx={{ width: "280px" }}
+            startIcon={<NewLabel />}
+          >
+            新規登録
+          </Button>
+        </Grid>
       </Box>
-
-      <Stack
-        direction="row"
-        spacing={4}
-        justifyContent="center"
-        sx={{ mt: 6, pb: 8 }}
-      >
-        <Box sx={{ textAlign: "center", maxWidth: 250 }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            AIによる自動分類
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            「機能要望」「不具合」など、内容に応じてAIが自動でタグ付け。
-          </Typography>
-        </Box>
-        <Box sx={{ textAlign: "center", maxWidth: 250 }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            インパクト分析
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            ポジティブかネガティブか、ビジネスへの影響度をAIがスコアリング。
-          </Typography>
-        </Box>
-        <Box sx={{ textAlign: "center", maxWidth: 250 }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            直感的なダッシュボード
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            分析結果をグラフやテーブルで可視化。重要なインサイトを見逃さない。
-          </Typography>
-        </Box>
-      </Stack>
     </Container>
   );
 };

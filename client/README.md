@@ -1,36 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# X-Koutei (クロス・コウテイ)
 
-## Getting Started
+日本の町工場に、「つながる頭脳」を。
 
-First, run the development server:
+X-Koutei は、中小・零細製造業が抱える情報の分断と属人化の課題を解決し、AI の力で世界に誇るものづくりを実現するための、製造業特化型コンサルティング AI です。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ プロダクトビジョン
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+我々は、日本の町工場に「つながる頭脳」を授ける。
+分断された紙と Excel の情報を一つに繋ぎ合わせ、中小・零細企業こそが、AI の力で、世界に誇るものづくりを実現する未来を創造する。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🎯 現在のフェーズ：技術検証 MVP (Professional Core)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+このリポジトリは、X-Koutei の核心技術である RAG (Retrieval-Augmented Generation) パイプラインを、AWS の本格的なインフラ上で構築・検証するためのものです。
 
-## Learn More
+### MVP の主要機能
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **ユーザー認証**: Amazon Cognito によるセキュアな認証基盤
+- **製品管理**: コンサルティング対象となる『製品』を登録・管理
+- **ファイル管理**: 各『製品』に複数の関連ファイル（設計図、仕様書など）を AWS S3 にアップロード
+- **横断 AI チャット**: 登録された全ファイルを横断的に AI が理解し、専門的な質問に根拠を提示しながら回答

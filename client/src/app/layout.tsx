@@ -12,7 +12,7 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = { title: "PDM AGENT" };
+export const metadata: Metadata = { title: "X-Koutei" };
 
 export default function RootLayout({
   children,
@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
-        <link rel="icon" href="/icon.png" />
+        <link rel="icon" href="/icon.svg" />
       </head>
       <body className={`${notoSans.variable} ${roboto.variable}`}>
         <Provider>{children}</Provider>
