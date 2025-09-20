@@ -2,185 +2,121 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// =================================
+// データソース & ジェネレータ
+// =================================
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-// ---------- Enums ----------
-enum AuthProvider {
-  GOOGLE
+
+// =================================
+// Enum定義
+// =================================
+
+// メッセージの話者の種別
+enum AuthorType {
+  USER   // 人間ユーザー
+  AI     // AIアシスタント
+  SYSTEM // システム通知 (将来用)
 }
 
-// ---------- Identity ----------
+// =================================
+// ドメインモデル定義
+// =================================
+
+// --- 認証とユーザーの核 ---
+
+// ユーザーモデル
+// Cognitoと連携し、アプリケーション内の「所有者」を表現する
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  name      String?
-  image     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  accounts     Account[]
-  sessions     Session[]
-
-  tags         Tag[]
-  products     Product[]
-  requirements Requirement[]
+  // Cognitoのユーザー識別子(sub)を主キーとする
+  id String @id
+  // ユーザーが参加しているすべてのスレッド
+  threads Thread[]
+  // ユーザーが所有するすべての製品
+  products Product[]
 }
 
-model Account {
-  id                 String        @id @default(cuid())
-  userId             String
-  provider           AuthProvider
-  providerAccountId  String
+// --- 製品と知識の核 ---
 
-  accessToken       String?       @db.Text
-  refreshToken      String?       @db.Text
-  idToken           String?       @db.Text
-  expiresAt         DateTime?
-
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-
-  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
-}
-
-model Session {
-  id            String    @id @default(cuid())
-  userId        String
-  sessionToken  String    @unique
-  expires       DateTime
-
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, expires])
-}
-
-// ---------- Domain ----------
-model Voicing {
-  id            String     @id @default(cuid())
-  productId     String
-  content       String
-  source        String
-  summary       String?
-  impactScore   Int?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-
-  product           Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
-  tags              VoicingTag[]
-  requirements      VoicingRequirement[]
-
-  @@index([productId, createdAt])
-}
-
-model Tag {
-  id        String     @id @default(cuid())
-  userId    String
-  name      String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  voicings  VoicingTag[]
-
-  // ユーザー内ユニーク
-  @@unique([userId, name])
-}
-
-model VoicingTag {
-  voicingId String
-  tagId     String
-  createdAt DateTime @default(now())
-
-  voicing   Voicing @relation(fields: [voicingId], references: [id], onDelete: Cascade)
-  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
-
-  @@id([voicingId, tagId])
-}
-
+// 製品モデル
+// ユーザーが管理する、ものづくりの対象
 model Product {
-  id          String   @id @default(cuid())
-  userId      String
+  id          String    @id @default(cuid())
   name        String
   description String?
-  content     String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  voicings     Voicing[]
-  requirements Requirement[]
-  features     Feature[]
+  // 所有者であるユーザーへの関連
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  // この製品に紐づくファイル群
+  files File[]
 }
 
+// ファイルモデル
+// 製品に紐づく、AIの知識源となるドキュメントファイル
+model File {
+  id        String   @id @default(cuid())
+  name      String   // アップロードされたファイル名
+  s3Key     String   @unique // S3上のオブジェクトキー
+  createdAt DateTime @default(now())
 
+  // 属する製品への関連
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-// ---------- Requirement Management ----------
-model Requirement {
-  id          String   @id @default(cuid())
-  userId      String
-  productId   String
-  title       String
-  content     String?
-  priority    Int      @default(50) // 数値（0-100）
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product      Product                @relation(fields: [productId], references: [id], onDelete: Cascade)
-  voicings     VoicingRequirement[]
-  features     RequirementFeature[]
-
-  @@index([userId, productId])
-  @@index([priority])
+  // このファイルから生成された、AIが直接読み込むテキストチャンク
+  documentChunks DocumentChunk[]
 }
 
-model VoicingRequirement {
-  voicingId     String
-  requirementId String
-  createdAt     DateTime @default(now())
+// ドキュメントチャンクモデル
+// AIの「脳細胞」。ベクトル化されたテキスト断片
+model DocumentChunk {
+  id        String   @id @default(cuid())
+  content   String   // 分割されたテキスト本文
 
-  voicing     Voicing     @relation(fields: [voicingId], references: [id], onDelete: Cascade)
-  requirement Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  // OpenAI `text-embedding-3-small` (1536次元) に対応したベクトルカラム
+  embedding Unsupported("vector(1536)")?
 
-  @@id([voicingId, requirementId])
+  // 由来するファイルへの関連
+  fileId String
+  file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
 
-// ---------- Feature Management ----------
-model Feature {
-  id          String   @id @default(cuid())
-  productId   String
-  name        String
-  description String?  // ユーザー自由記入（ステータス含む）
-  priority    Int      @default(50) // 数値（0-100）
-  effort      Int?     // 開発工数（ポイント）
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// --- 対話の核 ---
 
-  product       Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
-  requirements  RequirementFeature[]
+// スレッドモデル
+// 一連の対話が行われる「場」。ユーザーは複数のスレッドを持つことができる
+model Thread {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
 
-  @@index([productId])
-  @@index([priority])
+  // このスレッドに参加しているユーザー (多対多の関係)
+  users User[]
+
+  // このスreadで行われたすべてのメッセージ
+  messages Message[]
 }
 
-model RequirementFeature {
-  requirementId String
-  featureId     String
-  createdAt     DateTime @default(now())
+// メッセージモデル
+// スレッド内での個々の発言
+model Message {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
 
-  requirement Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
-  feature     Feature     @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  // 話者の種別 (USER, AI, SYSTEM)
+  author    AuthorType
+  // 発言内容
+  content   String     @db.Text
 
-  @@id([requirementId, featureId])
+  // 属するスレッドへの関連
+  threadId String
+  thread   Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
 }
