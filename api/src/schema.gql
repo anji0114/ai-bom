@@ -27,6 +27,7 @@ type Mutation {
   createProduct(input: CreateProductInput!): Product!
   createVoicing(input: CreateVoicingInput!): Voicing!
   logout: Boolean!
+  updateProduct(input: UpdateProductInput!): Product!
 }
 
 type Product {
@@ -55,6 +56,13 @@ type Tag {
   createdAt: DateTime!
   id: ID!
   name: String!
+}
+
+input UpdateProductInput {
+  content: String
+  description: String
+  id: String!
+  name: String
 }
 
 type User {

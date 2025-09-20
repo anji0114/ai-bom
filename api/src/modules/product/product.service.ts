@@ -4,7 +4,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
-import { CreateProductInput } from './dto/create-product.input';
+import { CreateProductInput, UpdateProductInput } from './dto/product.input';
 
 @Injectable()
 export class ProductService {
@@ -51,5 +51,22 @@ export class ProductService {
       data: products,
       total,
     };
+  }
+
+  async update(userId: string, input: UpdateProductInput) {
+    const { id, ...data } = input;
+
+    const product = await this.prisma.product.findUnique({
+      where: { id, userId },
+    });
+
+    if (!product) {
+      throw new NotFoundException('指定されたプロダクトが見つかりません');
+    }
+
+    return this.prisma.product.update({
+      where: { id, userId },
+      data,
+    });
   }
 }

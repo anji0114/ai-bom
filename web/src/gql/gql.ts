@@ -17,6 +17,7 @@ type Documents = {
     "\n  fragment DashbaordLayoutFragment on Product {\n    id\n    name\n    description\n    content\n    createdAt\n    updatedAt\n    userId\n    ...DashbardSidebarFragment\n  }\n": typeof types.DashbaordLayoutFragmentFragmentDoc,
     "\n  fragment DashbardSidebarFragment on Product {\n    id\n    name\n    description\n    content\n    createdAt\n    updatedAt\n    userId\n  }\n": typeof types.DashbardSidebarFragmentFragmentDoc,
     "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateVoicingDocument,
+    "\n  mutation UpdateProduct($input: UpdateProductInput!) {\n    updateProduct(input: $input) {\n      id\n      name\n      description\n      content\n      createdAt\n      userId\n      updatedAt\n    }\n  }\n": typeof types.UpdateProductDocument,
     "\n  mutation CreateProduct($input: CreateProductInput!) {\n    createProduct(input: $input) {\n      id\n      name\n      description\n      content\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.CreateProductDocument,
     "\n  query GetVoicings($input: GetVoicingsInput!) {\n    getVoicings(input: $input) {\n      ...VoicingConnection\n    }\n  }\n": typeof types.GetVoicingsDocument,
     "\n  fragment VoicingConnection on VoicingConnection {\n    data {\n      id\n      ...VoiceInfo\n    }\n    total\n  }\n": typeof types.VoicingConnectionFragmentDoc,
@@ -30,6 +31,7 @@ const documents: Documents = {
     "\n  fragment DashbaordLayoutFragment on Product {\n    id\n    name\n    description\n    content\n    createdAt\n    updatedAt\n    userId\n    ...DashbardSidebarFragment\n  }\n": types.DashbaordLayoutFragmentFragmentDoc,
     "\n  fragment DashbardSidebarFragment on Product {\n    id\n    name\n    description\n    content\n    createdAt\n    updatedAt\n    userId\n  }\n": types.DashbardSidebarFragmentFragmentDoc,
     "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n": types.CreateVoicingDocument,
+    "\n  mutation UpdateProduct($input: UpdateProductInput!) {\n    updateProduct(input: $input) {\n      id\n      name\n      description\n      content\n      createdAt\n      userId\n      updatedAt\n    }\n  }\n": types.UpdateProductDocument,
     "\n  mutation CreateProduct($input: CreateProductInput!) {\n    createProduct(input: $input) {\n      id\n      name\n      description\n      content\n      createdAt\n      updatedAt\n    }\n  }\n": types.CreateProductDocument,
     "\n  query GetVoicings($input: GetVoicingsInput!) {\n    getVoicings(input: $input) {\n      ...VoicingConnection\n    }\n  }\n": types.GetVoicingsDocument,
     "\n  fragment VoicingConnection on VoicingConnection {\n    data {\n      id\n      ...VoiceInfo\n    }\n    total\n  }\n": types.VoicingConnectionFragmentDoc,
@@ -66,6 +68,10 @@ export function graphql(source: "\n  fragment DashbardSidebarFragment on Product
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation CreateVoicing($input: CreateVoicingInput!) {\n    createVoicing(input: $input) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation UpdateProduct($input: UpdateProductInput!) {\n    updateProduct(input: $input) {\n      id\n      name\n      description\n      content\n      createdAt\n      userId\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateProduct($input: UpdateProductInput!) {\n    updateProduct(input: $input) {\n      id\n      name\n      description\n      content\n      createdAt\n      userId\n      updatedAt\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

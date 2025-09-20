@@ -18,3 +18,26 @@ export class CreateProductInput {
   @IsString()
   content?: string;
 }
+
+@InputType()
+export class UpdateProductInput {
+  @Field()
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  content?: string;
+}

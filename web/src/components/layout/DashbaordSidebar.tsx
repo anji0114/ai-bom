@@ -4,13 +4,14 @@ import {
   Button,
   ButtonBase,
   Drawer,
+  Grid,
   IconButton,
   List,
   ListItem,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Add, Chat, Dashboard, ListAlt } from "@mui/icons-material";
+import { Add, Chat, Dashboard, Edit, ListAlt } from "@mui/icons-material";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAtom, useAtomValue } from "jotai";
@@ -18,7 +19,8 @@ import { currentProductAtom, setStoredProductId } from "@/atoms/productAtoms";
 import { Product } from "@/gql/graphql";
 import { FragmentType, graphql, useFragment } from "@/gql";
 import { getRelativeTime } from "@/lib/date";
-import { FC } from "react";
+import { FC, useState } from "react";
+import { EditProductModal } from "@/features/dashbaord/components/EditProductModal";
 
 const ICON_SIDEBAR_WIDTH = 240;
 
@@ -141,6 +143,7 @@ const MENU_ITEMS = [
 const DashboardSidebarMenu = () => {
   const pathname = usePathname();
   const currentProduct = useAtomValue(currentProductAtom);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Box
@@ -158,9 +161,14 @@ const DashboardSidebarMenu = () => {
           borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
         }}
       >
-        <Typography variant="body2" fontWeight={700}>
-          {currentProduct?.name}
-        </Typography>
+        <Grid container justifyContent="space-between" alignItems="center">
+          <Typography variant="body2" fontWeight={700}>
+            {currentProduct?.name}
+          </Typography>
+          <IconButton onClick={() => setIsOpen(!isOpen)} size="small">
+            <Edit fontSize="small" />
+          </IconButton>
+        </Grid>
         <Typography variant="caption" color="text.secondary">
           最終更新:{" "}
           {currentProduct?.updatedAt
@@ -189,6 +197,11 @@ const DashboardSidebarMenu = () => {
           </ListItem>
         ))}
       </List>
+      <EditProductModal
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        product={currentProduct}
+      />
     </Box>
   );
 };

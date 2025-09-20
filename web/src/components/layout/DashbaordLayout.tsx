@@ -59,6 +59,7 @@ const DashbaordLayoutContent = ({
       if (storedProductId) {
         // 保存されているIDのプロダクトを探す
         const storedProduct = products.find((p) => p.id === storedProductId);
+        console.log("storedProduct", storedProduct);
         if (storedProduct) {
           setCurrentProduct(storedProduct);
           return;
