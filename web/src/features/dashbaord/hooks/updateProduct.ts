@@ -40,7 +40,6 @@ export const useUpdateProduct = () => {
               id: "GetProducts",
             });
           }
-          console.log("updatedProduct", updatedProduct);
 
           // currentProductを更新
           setCurrentProduct(updatedProduct);

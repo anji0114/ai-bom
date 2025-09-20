@@ -134,8 +134,8 @@ const MENU_ITEMS = [
     icon: <ListAlt />,
   },
   {
-    label: "VoC一覧",
-    href: "/dashboard/voc",
+    label: "要望・要求一覧",
+    href: "/dashboard/voicing",
     icon: <Chat />,
   },
 ];

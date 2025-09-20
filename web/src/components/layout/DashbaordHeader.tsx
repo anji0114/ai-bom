@@ -1,9 +1,9 @@
 "use client";
 
 import { currentProductAtom } from "@/atoms/productAtoms";
-import { VocCreateModal } from "@/features/dashbaord/components/VocCreateModal";
+import { CreateVoicingModal } from "@/features/voicing/components/CreateVoicingModal";
 import { robotoFonts } from "@/lib/theme";
-import { AppBar, Box, Button, Grid, Typography } from "@mui/material";
+import { AppBar, Button, Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import Image from "next/image";
 import Link from "next/link";
@@ -51,11 +51,11 @@ export const DashbaordHeader = () => {
           size="small"
           onClick={() => setIsModalOpen(true)}
         >
-          VOCを追加する
+          要望・要求を追加する
         </Button>
       </Grid>
       {currentProduct?.id && (
-        <VocCreateModal
+        <CreateVoicingModal
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           productId={currentProduct?.id}

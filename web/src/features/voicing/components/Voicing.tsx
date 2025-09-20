@@ -44,7 +44,7 @@ const voicingConnectionFragment = graphql(`
   }
 `);
 
-export const VocDashboard = () => {
+export const VoicingDashboard = () => {
   const currentProduct = useAtomValue(currentProductAtom);
 
   const { data } = useQuery(GetVoicingsDocument, {
@@ -60,7 +60,7 @@ export const VocDashboard = () => {
   return (
     <Box component="main" sx={{ flexGrow: 1, bgcolor: "background.default" }}>
       <Typography variant="h5" fontWeight={700} sx={{ mb: 4 }}>
-        VoC一覧
+        顧客の声一覧
       </Typography>
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -68,7 +68,7 @@ export const VocDashboard = () => {
           <Card variant="outlined">
             <CardContent sx={{ display: "flex", gap: 2, alignItems: "center" }}>
               <Typography color="text.secondary" pt={0.5}>
-                VoC総数
+                顧客の声総数
               </Typography>
               <Typography variant="h5">{voicingConnection?.total}</Typography>
             </CardContent>
@@ -76,7 +76,7 @@ export const VocDashboard = () => {
         </Grid>
       </Grid>
 
-      {/* VoC一覧エリア */}
+      {/* 一覧エリア */}
       <Card variant="outlined">
         <CardContent>
           <Box
@@ -87,7 +87,7 @@ export const VocDashboard = () => {
               mb: 2,
             }}
           >
-            <Typography variant="h6">顧客の声 (VoC) 一覧</Typography>
+            <Typography variant="h6">顧客の声一覧</Typography>
           </Box>
           <TextField
             fullWidth
@@ -97,11 +97,11 @@ export const VocDashboard = () => {
           />
         </CardContent>
 
-        {/* VoC一覧テーブル */}
+        {/* 一覧テーブル */}
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>VoC要約</TableCell>
+              <TableCell>顧客の声要約</TableCell>
               <TableCell>タグ</TableCell>
               <TableCell>インパクト</TableCell>
               <TableCell>受信日</TableCell>

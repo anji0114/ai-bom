@@ -21,14 +21,14 @@ import { useMutation } from "@apollo/client/react";
 import { graphql } from "@/gql";
 import { GetVoicingsDocument } from "@/gql/graphql";
 
-const vocSchema = z.object({
+const voicingSchema = z.object({
   content: z.string().min(1, "内容は必須です"),
   source: z.string().min(1, "ソースは必須です"),
 });
 
-type VocFormData = z.infer<typeof vocSchema>;
+type VoicingFormData = z.infer<typeof voicingSchema>;
 
-interface VocCreateModalProps {
+interface CreateVoicingModalProps {
   open: boolean;
   onClose: () => void;
   productId: string;
@@ -42,18 +42,18 @@ const CREATE_VOICING_MUTATION = graphql(`
   }
 `);
 
-export const VocCreateModal = ({
+export const CreateVoicingModal = ({
   open,
   onClose,
   productId,
-}: VocCreateModalProps) => {
+}: CreateVoicingModalProps) => {
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<VocFormData>({
-    resolver: zodResolver(vocSchema),
+  } = useForm<VoicingFormData>({
+    resolver: zodResolver(voicingSchema),
     defaultValues: {
       content: "",
       source: "",
@@ -70,7 +70,7 @@ export const VocCreateModal = ({
     awaitRefetchQueries: true,
   });
 
-  const handleFormSubmit = async (data: VocFormData) => {
+  const handleFormSubmit = async (data: VoicingFormData) => {
     try {
       await createVoicing({
         variables: {
@@ -80,7 +80,7 @@ export const VocCreateModal = ({
       reset();
       onClose();
     } catch (error) {
-      console.error("VOC作成エラー:", error);
+      console.error("顧客の声作成エラー:", error);
     }
   };
 
@@ -90,11 +90,34 @@ export const VocCreateModal = ({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-      <DialogTitle>VoC (顧客の声) を追加</DialogTitle>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <DialogTitle>要望・要求を追加</DialogTitle>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <DialogContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
+            <Controller
+              name="source"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth error={!!errors.source}>
+                  <InputLabel>ソース</InputLabel>
+                  <Select
+                    {...field}
+                    label="ソース"
+                    onChange={(e) => field.onChange(e.target.value)}
+                  >
+                    <MenuItem value="営業">営業</MenuItem>
+                    <MenuItem value="CS">CS</MenuItem>
+                    <MenuItem value="マーケティング">マーケティング</MenuItem>
+                    <MenuItem value="製品開発">製品開発</MenuItem>
+                    <MenuItem value="顧客">顧客</MenuItem>
+                    <MenuItem value="経営">経営</MenuItem>
+                    <MenuItem value="その他">その他</MenuItem>
+                  </Select>
+                  <FormHelperText>{errors.source?.message}</FormHelperText>
+                </FormControl>
+              )}
+            />
             <Controller
               name="content"
               control={control}
@@ -107,31 +130,8 @@ export const VocCreateModal = ({
                   rows={4}
                   error={!!errors.content}
                   helperText={errors.content?.message}
-                  placeholder="VoCの詳細内容を入力してください"
+                  placeholder="顧客の声の詳細内容を入力してください"
                 />
-              )}
-            />
-
-            <Controller
-              name="source"
-              control={control}
-              render={({ field }) => (
-                <FormControl fullWidth error={!!errors.source}>
-                  <InputLabel>ソース</InputLabel>
-                  <Select
-                    {...field}
-                    label="ソース"
-                    onChange={(e) => field.onChange(e.target.value)}
-                  >
-                    <MenuItem value="インタビュー">インタビュー</MenuItem>
-                    <MenuItem value="お問い合わせ">お問い合わせ</MenuItem>
-                    <MenuItem value="営業">営業</MenuItem>
-                    <MenuItem value="web">web</MenuItem>
-                    <MenuItem value="マーケター">マーケター</MenuItem>
-                    <MenuItem value="その他">その他</MenuItem>
-                  </Select>
-                  <FormHelperText>{errors.source?.message}</FormHelperText>
-                </FormControl>
               )}
             />
           </Box>

@@ -20,11 +20,12 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  accounts  Account[]
-  sessions  Session[]
+  accounts     Account[]
+  sessions     Session[]
 
-  tags      Tag[]
-  products  Product[]
+  tags         Tag[]
+  products     Product[]
+  requirements Requirement[]
 }
 
 model Account {
@@ -72,9 +73,9 @@ model Voicing {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 
-  product           Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product           Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
   tags              VoicingTag[]
-  relatedFeatures   FeatureVoicing[]
+  requirements      VoicingRequirement[]
 
   @@index([productId, createdAt])
 }
@@ -113,46 +114,73 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  voicings    Voicing[]
-  features    Feature[]
-  
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  voicings     Voicing[]
+  requirements Requirement[]
+  features     Feature[]
+
   @@index([userId])
 }
 
 
 
-enum FeatureStatus {
-  IDEA
-  PLANNED
-  IN_PROGRESS
-  COMPLETED
+// ---------- Requirement Management ----------
+model Requirement {
+  id          String   @id @default(cuid())
+  userId      String
+  productId   String
+  title       String
+  content     String?
+  priority    Int      @default(50) // 数値（0-100）
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product      Product                @relation(fields: [productId], references: [id], onDelete: Cascade)
+  voicings     VoicingRequirement[]
+  features     RequirementFeature[]
+
+  @@index([userId, productId])
+  @@index([priority])
 }
 
+model VoicingRequirement {
+  voicingId     String
+  requirementId String
+  createdAt     DateTime @default(now())
+
+  voicing     Voicing     @relation(fields: [voicingId], references: [id], onDelete: Cascade)
+  requirement Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  @@id([voicingId, requirementId])
+}
+
+// ---------- Feature Management ----------
 model Feature {
-  id          String        @id @default(cuid())
+  id          String   @id @default(cuid())
   productId   String
   name        String
-  description String?
-  content     String?
-  priority    Int           @default(50)
-  status      FeatureStatus @default(IDEA)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  description String?  // ユーザー自由記入（ステータス含む）
+  priority    Int      @default(50) // 数値（0-100）
+  effort      Int?     // 開発工数（ポイント）
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  product           Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
-  relatedVoicings   FeatureVoicing[]
+  product       Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+  requirements  RequirementFeature[]
 
   @@index([productId])
+  @@index([priority])
 }
 
-model FeatureVoicing {
-  featureId String
-  voicingId String
-  createdAt DateTime @default(now())
+model RequirementFeature {
+  requirementId String
+  featureId     String
+  createdAt     DateTime @default(now())
 
-  feature   Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
-  voicing   Voicing @relation(fields: [voicingId], references: [id], onDelete: Cascade)
+  requirement Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+  feature     Feature     @relation(fields: [featureId], references: [id], onDelete: Cascade)
 
-  @@id([featureId, voicingId])
+  @@id([requirementId, featureId])
 }

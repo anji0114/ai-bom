@@ -1,9 +1,6 @@
 -- CreateEnum
 CREATE TYPE "public"."AuthProvider" AS ENUM ('GOOGLE');
 
--- CreateEnum
-CREATE TYPE "public"."FeatureStatus" AS ENUM ('IDEA', 'PLANNED', 'IN_PROGRESS', 'COMPLETED');
-
 -- CreateTable
 CREATE TABLE "public"."User" (
     "id" TEXT NOT NULL,
@@ -92,14 +89,36 @@ CREATE TABLE "public"."Product" (
 );
 
 -- CreateTable
+CREATE TABLE "public"."Requirement" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "productId" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "content" TEXT,
+    "priority" INTEGER NOT NULL DEFAULT 50,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Requirement_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."VoicingRequirement" (
+    "voicingId" TEXT NOT NULL,
+    "requirementId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "VoicingRequirement_pkey" PRIMARY KEY ("voicingId","requirementId")
+);
+
+-- CreateTable
 CREATE TABLE "public"."Feature" (
     "id" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "content" TEXT,
     "priority" INTEGER NOT NULL DEFAULT 50,
-    "status" "public"."FeatureStatus" NOT NULL DEFAULT 'IDEA',
+    "effort" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -107,12 +126,12 @@ CREATE TABLE "public"."Feature" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."FeatureVoicing" (
+CREATE TABLE "public"."RequirementFeature" (
+    "requirementId" TEXT NOT NULL,
     "featureId" TEXT NOT NULL,
-    "voicingId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "FeatureVoicing_pkey" PRIMARY KEY ("featureId","voicingId")
+    CONSTRAINT "RequirementFeature_pkey" PRIMARY KEY ("requirementId","featureId")
 );
 
 -- CreateIndex
@@ -140,7 +159,16 @@ CREATE UNIQUE INDEX "Tag_userId_name_key" ON "public"."Tag"("userId", "name");
 CREATE INDEX "Product_userId_idx" ON "public"."Product"("userId");
 
 -- CreateIndex
+CREATE INDEX "Requirement_userId_productId_idx" ON "public"."Requirement"("userId", "productId");
+
+-- CreateIndex
+CREATE INDEX "Requirement_priority_idx" ON "public"."Requirement"("priority");
+
+-- CreateIndex
 CREATE INDEX "Feature_productId_idx" ON "public"."Feature"("productId");
+
+-- CreateIndex
+CREATE INDEX "Feature_priority_idx" ON "public"."Feature"("priority");
 
 -- AddForeignKey
 ALTER TABLE "public"."Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -164,10 +192,22 @@ ALTER TABLE "public"."VoicingTag" ADD CONSTRAINT "VoicingTag_tagId_fkey" FOREIGN
 ALTER TABLE "public"."Product" ADD CONSTRAINT "Product_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "public"."Requirement" ADD CONSTRAINT "Requirement_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."Requirement" ADD CONSTRAINT "Requirement_productId_fkey" FOREIGN KEY ("productId") REFERENCES "public"."Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."VoicingRequirement" ADD CONSTRAINT "VoicingRequirement_voicingId_fkey" FOREIGN KEY ("voicingId") REFERENCES "public"."Voicing"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."VoicingRequirement" ADD CONSTRAINT "VoicingRequirement_requirementId_fkey" FOREIGN KEY ("requirementId") REFERENCES "public"."Requirement"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "public"."Feature" ADD CONSTRAINT "Feature_productId_fkey" FOREIGN KEY ("productId") REFERENCES "public"."Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."FeatureVoicing" ADD CONSTRAINT "FeatureVoicing_featureId_fkey" FOREIGN KEY ("featureId") REFERENCES "public"."Feature"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."RequirementFeature" ADD CONSTRAINT "RequirementFeature_requirementId_fkey" FOREIGN KEY ("requirementId") REFERENCES "public"."Requirement"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."FeatureVoicing" ADD CONSTRAINT "FeatureVoicing_voicingId_fkey" FOREIGN KEY ("voicingId") REFERENCES "public"."Voicing"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."RequirementFeature" ADD CONSTRAINT "RequirementFeature_featureId_fkey" FOREIGN KEY ("featureId") REFERENCES "public"."Feature"("id") ON DELETE CASCADE ON UPDATE CASCADE;
