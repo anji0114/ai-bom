@@ -1,122 +1,85 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
-// =================================
-// データソース & ジェネレータ
-// =================================
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector")]
 }
 
-// =================================
-// Enum定義
-// =================================
-
-// メッセージの話者の種別
-enum AuthorType {
-  USER   // 人間ユーザー
-  AI     // AIアシスタント
-  SYSTEM // システム通知 (将来用)
-}
 
 // =================================
 // ドメインモデル定義
 // =================================
 
-// --- 認証とユーザーの核 ---
-
-// ユーザーモデル
-// Cognitoと連携し、アプリケーション内の「所有者」を表現する
 model User {
-  // Cognitoのユーザー識別子(sub)を主キーとする
-  id String @id
-  // ユーザーが参加しているすべてのスレッド
-  threads Thread[]
-  // ユーザーが所有するすべての製品
+  id String @id // Cognitoのユーザー識別子(sub)を主キーとする
+  email String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  threads Thread[] // ユーザーが参加しているすべてのスレッド
   products Product[]
 }
 
-// --- 製品と知識の核 ---
-
-// 製品モデル
-// ユーザーが管理する、ものづくりの対象
 model Product {
   id          String    @id @default(cuid())
   name        String
   description String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  // 所有者であるユーザーへの関連
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // この製品に紐づくファイル群
   files File[]
 }
 
-// ファイルモデル
-// 製品に紐づく、AIの知識源となるドキュメントファイル
 model File {
   id        String   @id @default(cuid())
   name      String   // アップロードされたファイル名
   s3Key     String   @unique // S3上のオブジェクトキー
   createdAt DateTime @default(now())
 
-  // 属する製品への関連
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  // このファイルから生成された、AIが直接読み込むテキストチャンク
   documentChunks DocumentChunk[]
 }
 
-// ドキュメントチャンクモデル
-// AIの「脳細胞」。ベクトル化されたテキスト断片
 model DocumentChunk {
   id        String   @id @default(cuid())
   content   String   // 分割されたテキスト本文
 
-  // OpenAI `text-embedding-3-small` (1536次元) に対応したベクトルカラム
   embedding Unsupported("vector(1536)")?
 
-  // 由来するファイルへの関連
   fileId String
   file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 }
 
-// --- 対話の核 ---
 
-// スレッドモデル
-// 一連の対話が行われる「場」。ユーザーは複数のスレッドを持つことができる
 model Thread {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  // このスレッドに参加しているユーザー (多対多の関係)
   users User[]
-
-  // このスreadで行われたすべてのメッセージ
   messages Message[]
 }
 
-// メッセージモデル
-// スレッド内での個々の発言
+enum AuthorType {
+  USER   // 人間ユーザー
+  AI     // AIアシスタント
+  SYSTEM // システム通知 (将来用)
+}
+
 model Message {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  // 話者の種別 (USER, AI, SYSTEM)
   author    AuthorType
-  // 発言内容
   content   String     @db.Text
 
-  // 属するスレッドへの関連
   threadId String
   thread   Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
 }

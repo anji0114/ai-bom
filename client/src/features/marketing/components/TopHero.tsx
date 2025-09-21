@@ -1,6 +1,7 @@
 import { AddModerator, NewLabel } from "@mui/icons-material";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Image from "next/image";
+import Link from "next/link";
 
 export const TopHero = () => {
   return (
@@ -39,14 +40,16 @@ export const TopHero = () => {
           AI です。
         </Typography>
         <Grid container spacing={2}>
-          <Button
-            variant="outlined"
-            size="large"
-            sx={{ width: "280px" }}
-            startIcon={<AddModerator />}
-          >
-            ログイン
-          </Button>
+          <Link href="/login" passHref>
+            <Button
+              variant="outlined"
+              size="large"
+              sx={{ width: "280px" }}
+              startIcon={<AddModerator />}
+            >
+              ログイン
+            </Button>
+          </Link>
           <Button
             variant="contained"
             size="large"
