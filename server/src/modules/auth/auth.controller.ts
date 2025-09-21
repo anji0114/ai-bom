@@ -10,20 +10,12 @@ import {
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 
-interface LoginRequest {
+type LoginRequest = {
   username: string;
   password: string;
-}
+};
 
-interface LoginResponse {
-  success: boolean;
-}
-
-interface RefreshRequest {
-  username: string;
-}
-
-@Controller('api')
+@Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -35,12 +27,17 @@ export class AuthController {
     const { username, password } = loginRequest;
 
     try {
-      const { accessToken, refreshToken } = await this.authService.login(
-        username,
-        password,
-      );
+      const { accessToken, refreshToken, idToken } =
+        await this.authService.login(username, password);
 
       res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 1000, // 60分
+      });
+
+      res.cookie('idToken', idToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -54,7 +51,9 @@ export class AuthController {
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30日
       });
 
-      const response: LoginResponse = { success: true };
+      const user = await this.authService.getUsernameFromIdToken(idToken);
+
+      const response = { success: true, user };
       res.json(response);
     } catch (error) {
       const message =
@@ -64,35 +63,40 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(
-    @Body() refreshRequest: RefreshRequest,
-    @Req() req: Request,
-    @Res() res: Response,
-  ): Promise<void> {
-    const { username } = refreshRequest;
+  async refresh(@Req() req: Request, @Res() res: Response): Promise<void> {
     const refreshToken = req.cookies['refreshToken'] as string | null;
+    const idToken = req.cookies['idToken'] as string | null;
 
-    if (!refreshToken) {
+    if (!refreshToken || !idToken) {
       throw new HttpException(
         'Refresh token not found',
         HttpStatus.UNAUTHORIZED,
       );
     }
 
+    const username = await this.authService.getUsernameFromIdToken(idToken);
+
     try {
-      const { accessToken } = await this.authService.refreshToken(
+      const { accessToken, idToken } = await this.authService.refreshToken(
         refreshToken,
-        username,
+        username.username,
       );
 
-      res.cookie('access-token', accessToken, {
+      res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 60 * 60 * 1000, // 60分
       });
 
-      const response: LoginResponse = { success: true };
+      res.cookie('idToken', idToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 1000, // 60分
+      });
+
+      const response = { success: true, user: username };
       res.json(response);
     } catch (error) {
       const message =

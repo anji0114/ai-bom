@@ -3,11 +3,20 @@ import {
   InitiateAuthCommand,
   AuthFlowType,
 } from '@aws-sdk/client-cognito-identity-provider';
+import { CognitoJwtVerifier } from 'aws-jwt-verify';
 import { CognitoConfigService } from './cognito-config.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly cognitoConfigService: CognitoConfigService) {}
+  private idTokenVerifier: CognitoJwtVerifier<any, any, any>;
+
+  constructor(private readonly cognitoConfigService: CognitoConfigService) {
+    this.idTokenVerifier = CognitoJwtVerifier.create({
+      userPoolId: this.cognitoConfigService.userPoolId,
+      tokenUse: 'id',
+      clientId: this.cognitoConfigService.clientId,
+    });
+  }
 
   async login(
     username: string,
@@ -45,6 +54,20 @@ export class AuthService {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Authentication failed: ${message}`);
+    }
+  }
+
+  async getUsernameFromIdToken(idToken: string): Promise<{
+    username: string;
+    sub: string;
+  }> {
+    try {
+      const payload = await this.idTokenVerifier.verify(idToken);
+      const username = payload['cognito:username'] as string;
+      const sub = payload.sub;
+      return { username, sub };
+    } catch {
+      throw new Error('Invalid ID token');
     }
   }
 

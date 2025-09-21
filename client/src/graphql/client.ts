@@ -1,8 +1,9 @@
+import { apiUrl } from "@/constants/url";
 import { HttpLink } from "@apollo/client";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 const httpLink = new HttpLink({
-  uri: process.env.NEXT_PUBLIC_GRAPHQL_URL,
+  uri: `${apiUrl}/graphql`,
   credentials: "include",
 });
 
