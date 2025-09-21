@@ -18,6 +18,20 @@ export class AuthService {
     });
   }
 
+  async verifyAccessToken(accessToken: string): Promise<boolean> {
+    try {
+      const accessTokenVerifier = CognitoJwtVerifier.create({
+        userPoolId: this.cognitoConfigService.userPoolId,
+        tokenUse: 'access',
+        clientId: this.cognitoConfigService.clientId,
+      });
+      await accessTokenVerifier.verify(accessToken);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async login(
     username: string,
     password: string,
@@ -57,7 +71,7 @@ export class AuthService {
     }
   }
 
-  async getUsernameFromIdToken(idToken: string): Promise<{
+  async getUserIdFromIdToken(idToken: string): Promise<{
     username: string;
     sub: string;
   }> {

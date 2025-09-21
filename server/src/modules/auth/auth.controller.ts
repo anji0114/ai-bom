@@ -6,6 +6,7 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  Get,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
@@ -51,7 +52,7 @@ export class AuthController {
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30日
       });
 
-      const user = await this.authService.getUsernameFromIdToken(idToken);
+      const user = await this.authService.getUserIdFromIdToken(idToken);
 
       const response = { success: true, user };
       res.json(response);
@@ -74,7 +75,7 @@ export class AuthController {
       );
     }
 
-    const username = await this.authService.getUsernameFromIdToken(idToken);
+    const username = await this.authService.getUserIdFromIdToken(idToken);
 
     try {
       const { accessToken, idToken } = await this.authService.refreshToken(
@@ -103,5 +104,36 @@ export class AuthController {
         error instanceof Error ? error.message : 'Token refresh failed';
       throw new HttpException(message, HttpStatus.UNAUTHORIZED);
     }
+  }
+
+  @Get('test-login')
+  async testLogin(@Res() res: Response): Promise<void> {
+    const username = process.env.SEED_USER_EMAIL as string;
+    const password = process.env.SEED_USER_PASSWORD as string;
+
+    if (!username || !password) {
+      throw new HttpException('Not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const { accessToken, idToken } = await this.authService.login(
+      username,
+      password,
+    );
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 1000, // 60分
+    });
+
+    res.cookie('idToken', idToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 1000, // 60分
+    });
+
+    res.json({ success: true, message: 'Test cookies set' });
   }
 }

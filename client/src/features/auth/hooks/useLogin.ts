@@ -40,30 +40,3 @@ export const useLogin = () => {
 
   return { login, loading };
 };
-
-export const useRefreshedToken = () => {
-  const refreshedToken = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/api/auth/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-
-      const data = await response.json();
-      console.log(data);
-
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  return { refreshedToken };
-};

@@ -11,14 +11,15 @@ graphql(`
 `);
 
 const fragment = graphql(`
-  fragment Me on User {
+  fragment Me on AuthenticatedUser {
     id
+    email
   }
 `);
 
 export const useGetMe = () => {
   const { data, loading, error } = useQuery(GetmeDocument, {
-    pollInterval: 60 * 60 * 1000,
+    pollInterval: 60 * 60 * 1000, // 1 hour
   });
   const meData = useFragment(fragment, data?.getMe);
 
