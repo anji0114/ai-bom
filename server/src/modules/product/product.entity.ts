@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID, InputType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Product {
@@ -19,4 +19,13 @@ export class Product {
 
   @Field(() => ID)
   userId: string;
+}
+
+@InputType()
+export class CreateProductInput {
+  @Field()
+  name: string;
+
+  @Field(() => String, { nullable: true })
+  description: string | null;
 }

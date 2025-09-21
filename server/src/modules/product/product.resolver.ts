@@ -1,5 +1,5 @@
-import { Resolver, Query, Context } from '@nestjs/graphql';
-import { Product } from './product.entity';
+import { Resolver, Query, Context, Mutation, Args } from '@nestjs/graphql';
+import { CreateProductInput, Product } from './product.entity';
 import { ProductService } from './product.service';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
@@ -17,5 +17,16 @@ export class ProductResolver {
     const userId = context.req.user.sub;
 
     return this.productService.getProducts(userId);
+  }
+
+  @Mutation(() => Product)
+  @UseGuards(AuthGuard)
+  createProduct(
+    @Context() context: { req: AuthenticatedRequest },
+    @Args('input') input: CreateProductInput,
+  ): Promise<Product> {
+    const userId = context.req.user.sub;
+
+    return this.productService.createProduct(userId, input);
   }
 }

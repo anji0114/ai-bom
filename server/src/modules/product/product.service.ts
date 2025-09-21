@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Product } from './product.entity';
+import { CreateProductInput, Product } from './product.entity';
 import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
@@ -14,5 +14,16 @@ export class ProductService {
     });
 
     return products;
+  }
+
+  async createProduct(
+    userId: string,
+    input: CreateProductInput,
+  ): Promise<Product> {
+    const product = await this.prisma.product.create({
+      data: { ...input, userId: userId },
+    });
+
+    return product;
   }
 }
