@@ -3,13 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { AuthenticatedUser } from '@/modules/auth/user.entity';
 import { AuthGuard } from '@/modules/auth/auth.guard';
 import { PrismaService } from '@/prisma/prisma.service';
-
-interface AuthenticatedRequest {
-  user: {
-    username: string;
-    sub: string;
-  };
-}
+import { AuthenticatedRequest } from '@/types/auth';
 
 @Resolver()
 export class UserResolver {

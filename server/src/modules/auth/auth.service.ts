@@ -79,6 +79,7 @@ export class AuthService {
       const payload = await this.idTokenVerifier.verify(idToken);
       const username = payload['cognito:username'] as string;
       const sub = payload.sub;
+
       return { username, sub };
     } catch {
       throw new Error('Invalid ID token');
