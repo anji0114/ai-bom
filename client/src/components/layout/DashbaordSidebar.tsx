@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Button, Drawer, IconButton, List, ListItem } from "@mui/material";
 import { Chat, Dashboard, ListAlt, Settings } from "@mui/icons-material";
 import { usePathname } from "next/navigation";
