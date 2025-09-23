@@ -1,5 +1,7 @@
+import { Products } from "@/features/products/components/Products";
+
 const ProductsPage = () => {
-  return <div>ProductsPage</div>;
+  return <Products />;
 };
 
 export default ProductsPage;
