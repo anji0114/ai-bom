@@ -26,6 +26,9 @@ export const useCreateProduct = () => {
       onError: (error) => {
         console.error(error);
       },
+      update: (cache, { data }) => {
+        cache.evict({ fieldName: "getProducts" });
+      },
     });
   };
 

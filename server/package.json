@@ -28,6 +28,7 @@
     "@apollo/server": "4.12.2",
     "@aws-sdk/client-cognito-identity-provider": "^3.893.0",
     "@aws-sdk/client-s3": "^3.893.0",
+    "@aws-sdk/s3-request-presigner": "^3.895.0",
     "@langchain/anthropic": "^0.3.27",
     "@langchain/core": "^0.3.75",
     "@nestjs/apollo": "^13.1.0",

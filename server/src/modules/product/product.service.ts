@@ -16,6 +16,18 @@ export class ProductService {
     return products;
   }
 
+  async getProduct(id: string): Promise<Product> {
+    const product = await this.prisma.product.findUnique({
+      where: { id: id },
+    });
+
+    if (!product) {
+      throw new Error('Product not found');
+    }
+
+    return product;
+  }
+
   async createProduct(
     userId: string,
     input: CreateProductInput,

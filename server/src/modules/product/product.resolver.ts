@@ -19,6 +19,12 @@ export class ProductResolver {
     return this.productService.getProducts(userId);
   }
 
+  @Query(() => Product)
+  @UseGuards(AuthGuard)
+  getProduct(@Args('id') id: string): Promise<Product> {
+    return this.productService.getProduct(id);
+  }
+
   @Mutation(() => Product)
   @UseGuards(AuthGuard)
   createProduct(

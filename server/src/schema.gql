@@ -33,5 +33,6 @@ type Product {
 
 type Query {
   getMe: AuthenticatedUser!
+  getProduct(id: String!): Product!
   getProducts: [Product!]!
 }
