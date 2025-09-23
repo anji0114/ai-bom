@@ -1,9 +1,25 @@
-import { AddModerator, NewLabel } from "@mui/icons-material";
+"use client";
+
+import { useState } from "react";
+import { useGetMe } from "@/hooks/useGetMe";
+import { AddModerator } from "@mui/icons-material";
 import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import { LoginDialog } from "./LoginDialog";
 
 export const TopHero = () => {
+  const { data } = useGetMe();
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+
+  const handleLoginClick = () => {
+    setLoginDialogOpen(true);
+  };
+
+  const handleLoginDialogClose = () => {
+    setLoginDialogOpen(false);
+  };
+
   return (
     <Container component="main" maxWidth="md">
       <Box
@@ -40,26 +56,34 @@ export const TopHero = () => {
           AI です。
         </Typography>
         <Grid container spacing={2}>
-          <Link href="/login" passHref>
+          {data ? (
+            <Button
+              href="/dashboard"
+              variant="contained"
+              size="large"
+              sx={{ width: "280px" }}
+              component={Link}
+            >
+              ダッシュボード
+            </Button>
+          ) : (
             <Button
               variant="outlined"
               size="large"
               sx={{ width: "280px" }}
               startIcon={<AddModerator />}
+              onClick={handleLoginClick}
             >
               ログイン
             </Button>
-          </Link>
-          <Button
-            variant="contained"
-            size="large"
-            sx={{ width: "280px" }}
-            startIcon={<NewLabel />}
-          >
-            新規登録
-          </Button>
+          )}
+          
         </Grid>
       </Box>
+      <LoginDialog
+        open={loginDialogOpen}
+        onClose={handleLoginDialogClose}
+      />
     </Container>
   );
 };

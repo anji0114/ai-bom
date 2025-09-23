@@ -1,7 +1,13 @@
 "use client";
 
 import { Box, Button, Drawer, IconButton, List, ListItem } from "@mui/material";
-import { Chat, Dashboard, ListAlt, Settings } from "@mui/icons-material";
+import {
+  Chat,
+  ChatOutlined,
+  DashboardOutlined,
+  Settings,
+  ViewInAr,
+} from "@mui/icons-material";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { FC } from "react";
@@ -13,17 +19,17 @@ const MENU_ITEMS = [
   {
     label: "ダッシュボード",
     href: "/dashboard",
-    icon: <Dashboard />,
+    icon: <DashboardOutlined />,
   },
   {
-    label: "機能一覧",
-    href: "/dashboard/features",
-    icon: <ListAlt />,
+    label: "製品一覧",
+    href: "/products",
+    icon: <ViewInAr />,
   },
   {
-    label: "要望・要求一覧",
-    href: "/dashboard/voicing",
-    icon: <Chat />,
+    label: "チャット",
+    href: "/chat",
+    icon: <ChatOutlined />,
   },
 ];
 
@@ -63,12 +69,13 @@ export const DashbaordSidebar: FC = () => {
                   sx={{
                     color: (theme) => theme.palette.text.primary,
                     justifyContent: "flex-start",
-                    backgroundColor:
-                      item.href === pathname ? "white" : undefined,
+                    backgroundColor: pathname.startsWith(item.href)
+                      ? "white"
+                      : undefined,
                     border: (theme) =>
-                      item.href === pathname
+                      pathname.startsWith(item.href)
                         ? `1px solid ${theme.palette.grey[300]}`
-                        : undefined,
+                        : `1px solid transparent`,
                   }}
                   startIcon={item.icon}
                   component={Link}
