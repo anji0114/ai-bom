@@ -2,22 +2,16 @@
 
 import { useCreateProduct } from "@/features/dashbaord/hooks/useCreateProduct";
 import { Add } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  ListItem,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, Grid, List, Typography } from "@mui/material";
 import { useGetProducts } from "../hooks/useGetProducts";
-import Link from "next/link";
-import { graphql, useFragment } from "@/gql";
+import { ProductItem } from "./ProductItem";
+import { useFragment } from "@/gql";
+import { graphql } from "@/gql";
 
 const fragment = graphql(`
-  fragment ProductItem on Product {
+  fragment ProductList on Product {
     id
-    name
+    ...ProductItem
   }
 `);
 
@@ -43,19 +37,11 @@ export const Products = () => {
             製品を作成
           </Button>
         </Grid>
-        <Box sx={{ flex: 1 }}>
+        <Grid container spacing={2} sx={{ flex: 1 }} flexWrap={"wrap"}>
           {products.map((product) => (
-            <ListItem key={product.id}>
-              <Link href={`/products/${product.id}`}>
-                {product.name || (
-                  <Typography variant="body1" component="p">
-                    製品名未設定
-                  </Typography>
-                )}
-              </Link>
-            </ListItem>
+            <ProductItem key={product.id} product={product} />
           ))}
-        </Box>
+        </Grid>
       </Grid>
     </Container>
   );

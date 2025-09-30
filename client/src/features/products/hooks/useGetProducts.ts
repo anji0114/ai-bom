@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/client/react";
 graphql(`
   query GetProducts {
     getProducts {
-      ...ProductItem
+      ...ProductList
     }
   }
 `);

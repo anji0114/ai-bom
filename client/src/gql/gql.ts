@@ -17,8 +17,9 @@ type Documents = {
     "\n  mutation CreateProduct($input: CreateProductInput!) {\n    createProduct(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateProductDocument,
     "\n  fragment ProductDetail on Product {\n    id\n    name\n  }\n": typeof types.ProductDetailFragmentDoc,
     "\n  fragment ProductItem on Product {\n    id\n    name\n  }\n": typeof types.ProductItemFragmentDoc,
+    "\n  fragment ProductList on Product {\n    id\n    ...ProductItem\n  }\n": typeof types.ProductListFragmentDoc,
     "\n  query GetProduct($id: String!) {\n    getProduct(id: $id) {\n      ...ProductDetail\n    }\n  }\n": typeof types.GetProductDocument,
-    "\n  query GetProducts {\n    getProducts {\n      ...ProductItem\n    }\n  }\n": typeof types.GetProductsDocument,
+    "\n  query GetProducts {\n    getProducts {\n      ...ProductList\n    }\n  }\n": typeof types.GetProductsDocument,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": typeof types.GetmeDocument,
     "\n  fragment Me on AuthenticatedUser {\n    id\n    email\n  }\n": typeof types.MeFragmentDoc,
 };
@@ -26,8 +27,9 @@ const documents: Documents = {
     "\n  mutation CreateProduct($input: CreateProductInput!) {\n    createProduct(input: $input) {\n      id\n    }\n  }\n": types.CreateProductDocument,
     "\n  fragment ProductDetail on Product {\n    id\n    name\n  }\n": types.ProductDetailFragmentDoc,
     "\n  fragment ProductItem on Product {\n    id\n    name\n  }\n": types.ProductItemFragmentDoc,
+    "\n  fragment ProductList on Product {\n    id\n    ...ProductItem\n  }\n": types.ProductListFragmentDoc,
     "\n  query GetProduct($id: String!) {\n    getProduct(id: $id) {\n      ...ProductDetail\n    }\n  }\n": types.GetProductDocument,
-    "\n  query GetProducts {\n    getProducts {\n      ...ProductItem\n    }\n  }\n": types.GetProductsDocument,
+    "\n  query GetProducts {\n    getProducts {\n      ...ProductList\n    }\n  }\n": types.GetProductsDocument,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": types.GetmeDocument,
     "\n  fragment Me on AuthenticatedUser {\n    id\n    email\n  }\n": types.MeFragmentDoc,
 };
@@ -61,11 +63,15 @@ export function graphql(source: "\n  fragment ProductItem on Product {\n    id\n
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\n  fragment ProductList on Product {\n    id\n    ...ProductItem\n  }\n"): (typeof documents)["\n  fragment ProductList on Product {\n    id\n    ...ProductItem\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  query GetProduct($id: String!) {\n    getProduct(id: $id) {\n      ...ProductDetail\n    }\n  }\n"): (typeof documents)["\n  query GetProduct($id: String!) {\n    getProduct(id: $id) {\n      ...ProductDetail\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetProducts {\n    getProducts {\n      ...ProductItem\n    }\n  }\n"): (typeof documents)["\n  query GetProducts {\n    getProducts {\n      ...ProductItem\n    }\n  }\n"];
+export function graphql(source: "\n  query GetProducts {\n    getProducts {\n      ...ProductList\n    }\n  }\n"): (typeof documents)["\n  query GetProducts {\n    getProducts {\n      ...ProductList\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
