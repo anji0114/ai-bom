@@ -1,8 +1,20 @@
 "use client";
 
-import { Box, Container } from "@mui/material";
+import { useUploadS3 } from "@/hooks/useUploadS3";
+import { Box, Container, Input } from "@mui/material";
 
 export const Dashboard = () => {
+  const { openUploadS3 } = useUploadS3();
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const response = await openUploadS3(file);
+    console.log(response);
+    alert("Uploaded");
+  };
+
   return (
     <Container
       maxWidth="lg"
@@ -29,7 +41,7 @@ export const Dashboard = () => {
           justifyContent: "center",
         }}
       >
-        新しい製品を作成する
+        <input type="file" onChange={(e) => handleUpload(e)} />
       </Box>
     </Container>
   );

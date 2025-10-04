@@ -17,7 +17,9 @@ services:
     environment:
       - SERVICES=s3
       - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
+      - S3_BUCKET_NAME=x-kotei-bucket
+    volumes:
+      - ./scripts/init-s3.sh:/etc/localstack/init/ready.d/init-s3.sh
 
 volumes:
   postgres_data:

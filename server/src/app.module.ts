@@ -9,6 +9,7 @@ import { AppController } from '@/modules/app/app.controller';
 import { PrismaModule } from '@/prisma/prisma.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { ProductModule } from '@/modules/product/product.module';
+import { S3Module } from './modules/s3/s3.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ProductModule } from '@/modules/product/product.module';
     }),
     AuthModule,
     ProductModule,
+    S3Module,
   ],
   controllers: [AppController],
   providers: [AppService],
