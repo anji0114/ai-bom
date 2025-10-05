@@ -6,15 +6,8 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { Request } from 'express';
 import { AuthService } from './auth.service';
-
-interface AuthenticatedRequest extends Request {
-  user?: {
-    username: string;
-    sub: string;
-  };
-}
+import { AuthenticatedRequest } from '@/types/auth';
 
 interface GqlContext {
   req: AuthenticatedRequest;
@@ -25,9 +18,18 @@ export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const ctx = GqlExecutionContext.create(context);
-    const gqlContext: GqlContext = ctx.getContext();
-    const request = gqlContext.req;
+    let request: AuthenticatedRequest;
+
+    const gqlContext = GqlExecutionContext.create(context);
+    const ctx: GqlContext = gqlContext.getContext();
+
+    if (ctx?.req) {
+      request = ctx.req;
+    } else {
+      // HTTPコンテキストの場合
+      request = context.switchToHttp().getRequest();
+    }
+
     const accessToken = request.cookies?.accessToken as string;
 
     if (!accessToken || typeof accessToken !== 'string') {

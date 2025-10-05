@@ -23,10 +23,13 @@ export class S3Service {
     this.bucketName = this.configService.get('S3_BUCKET_NAME') as string;
   }
 
-  async uploadImage(file: Express.Multer.File): Promise<{ s3Key: string }> {
+  async uploadImage(
+    file: Express.Multer.File,
+    userId: string,
+  ): Promise<{ s3Key: string }> {
     const uuid = uuidv4();
     const safeName = file.originalname.replace(/\s+/g, '_');
-    const key = `images/${uuid}-${safeName}`;
+    const key = `users/${userId}/files/${uuid}-${safeName}`;
 
     const command = new PutObjectCommand({
       Bucket: this.bucketName,

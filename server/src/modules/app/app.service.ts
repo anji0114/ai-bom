@@ -35,7 +35,7 @@ export class AppService {
           </style>
         </head>
         <body>
-          <h1>Hello World!! This is the PDM Agent API</h1>
+          <h1>Hello World!! This is the BOM APP</h1>
         </body>
       </html>
     `;
