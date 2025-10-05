@@ -15,7 +15,7 @@ export class UserResolver {
     @Context() context: { req: AuthenticatedRequest },
   ): Promise<AuthenticatedUser> {
     const user = context.req.user;
-    const userId = user.sub;
+    const userId = user?.sub;
 
     const dbUser = await this.prismaService.user.findUnique({
       where: { id: userId },

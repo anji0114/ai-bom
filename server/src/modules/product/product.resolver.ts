@@ -1,7 +1,7 @@
 import { Resolver, Query, Context, Mutation, Args } from '@nestjs/graphql';
 import { CreateProductInput, Product } from './product.entity';
 import { ProductService } from './product.service';
-import { UseGuards } from '@nestjs/common';
+import { NotFoundException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthenticatedRequest } from '@/types/auth';
 
@@ -14,7 +14,11 @@ export class ProductResolver {
   getProducts(
     @Context() context: { req: AuthenticatedRequest },
   ): Promise<Product[]> {
-    const userId = context.req.user.sub;
+    const userId = context.req.user?.sub;
+
+    if (!userId) {
+      throw new NotFoundException('User not found');
+    }
 
     return this.productService.getProducts(userId);
   }
@@ -31,7 +35,11 @@ export class ProductResolver {
     @Context() context: { req: AuthenticatedRequest },
     @Args('input') input: CreateProductInput,
   ): Promise<Product> {
-    const userId = context.req.user.sub;
+    const userId = context.req.user?.sub;
+
+    if (!userId) {
+      throw new NotFoundException('User not found');
+    }
 
     return this.productService.createProduct(userId, input);
   }
