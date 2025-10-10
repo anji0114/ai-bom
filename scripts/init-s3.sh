@@ -14,8 +14,8 @@ done
 
 echo "LocalStack is ready. Creating S3 bucket..."
 
-# バケット名を環境変数から取得（デフォルト: x-kotei-bucket）
-BUCKET_NAME=${S3_BUCKET_NAME:-"x-kotei-bucket"}
+# バケット名を環境変数から取得（デフォルト: ai-bom-bucket）
+BUCKET_NAME=${S3_BUCKET_NAME:-"ai-bom-bucket"}
 
 # バケット作成
 aws --endpoint-url=http://localhost:4566 \

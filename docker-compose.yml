@@ -4,8 +4,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: x-kotei
-      POSTGRES_USER: x-kotei-user
+      POSTGRES_DB: ai-bom
+      POSTGRES_USER: ai-bom-user
       POSTGRES_PASSWORD: password
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -17,7 +17,7 @@ services:
     environment:
       - SERVICES=s3
       - DEBUG=1
-      - S3_BUCKET_NAME=x-kotei-bucket
+      - S3_BUCKET_NAME=ai-bom-bucket
     volumes:
       - ./scripts/init-s3.sh:/etc/localstack/init/ready.d/init-s3.sh
 
