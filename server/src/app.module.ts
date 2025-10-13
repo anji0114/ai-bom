@@ -8,7 +8,7 @@ import { AppService } from '@/modules/app/app.service';
 import { AppController } from '@/modules/app/app.controller';
 import { PrismaModule } from '@/prisma/prisma.module';
 import { AuthModule } from '@/modules/auth/auth.module';
-import { ProductModule } from '@/modules/product/product.module';
+import { ItemModule } from '@/modules/item/item.module';
 import { S3Module } from './modules/s3/s3.module';
 
 @Module({
@@ -29,7 +29,7 @@ import { S3Module } from './modules/s3/s3.module';
       isGlobal: true,
     }),
     AuthModule,
-    ProductModule,
+    ItemModule,
     S3Module,
   ],
   controllers: [AppController],

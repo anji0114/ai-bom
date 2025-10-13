@@ -11,75 +11,193 @@ datasource db {
 }
 
 
-// =================================
-// ドメインモデル定義
-// =================================
+// ======================================================
+// ENUMS
+// ======================================================
 
-model User {
-  id String @id // Cognitoのユーザー識別子(sub)を主キーとする
-  email String @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  threads Thread[] // ユーザーが参加しているすべてのスレッド
-  products Product[]
+enum BomType {
+  E   // 設計BOM
+  M   // 製造BOM
 }
 
-model Product {
-  id          String    @id @default(cuid())
+enum MapKind {
+  OneToOne   // 同一
+  Split      // 分割
+  Merge      // 統合
+  Substitute // 代替
+  Outsource  // 外注
+}
+
+enum SupplyType {
+  MAKE
+  BUY
+  OUTSOURCE
+}
+
+// ======================================================
+// TENANT / USER（マルチテナント基盤）
+// ======================================================
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  users     User[]
+  items     Item[]
+  boms      Bom[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  name      String
+  email     String   @unique
+  role      String?  // "designer" | "engineer" | "admin" など
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ======================================================
+// ITEM（部品・Assy・工程などのマスタ）
+// ======================================================
+
+model Item {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+
   name        String
+  kind        String   // "Part" | "Assy" | "Process" など
   description String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  files File[]
+  attributes  Json?    // 材質・重量など
+  metadata    Json?    // システム／AI補助情報
+
+  rootOfBom   Bom?     @relation("RootItem")
+  usedIn      BomItem[]  @relation("ItemUsage")
+
+  folders     Folder[]
+  files       File[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ======================================================
+// BOM構造（E-BOM / M-BOMを明確に分離）
+// ======================================================
+
+model Bom {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+
+  type        BomType  // "E" | "M"
+  title       String?
+  rootItemId  String @unique
+  root        Item     @relation("RootItem", fields: [rootItemId], references: [id])
+
+  description String?
+
+  items       BomItem[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BomItem {
+  id           String   @id @default(cuid())
+  bomId        String
+  bom          Bom      @relation(fields: [bomId], references: [id])
+
+  itemId       String
+  item         Item     @relation("ItemUsage", fields: [itemId], references: [id])
+
+  usageNote         String?
+  supplyType    SupplyType?
+
+  note          String?
+
+  // 子構造リンク（多対多対応）
+  parentLinks  BomLink[] @relation("ParentLinks")
+  childLinks   BomLink[] @relation("ChildLinks")
+
+  // BOM Map
+  mapsFrom     BomMap[] @relation("BomMapTarget")
+  mapsTo       BomMap[] @relation("BomMapSource")
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ======================================================
+// BOM内部のリンク構造（多対多の親子関係）
+// ======================================================
+
+model BomLink {
+  id              String   @id @default(cuid())
+  parentBomItemId String
+  childBomItemId  String
+
+  parent          BomItem @relation("ParentLinks", fields: [parentBomItemId], references: [id])
+  child           BomItem @relation("ChildLinks", fields: [childBomItemId], references: [id])
+
+  quantity       Float    @default(1)
+  note           String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ======================================================
+// E-BOM ⇄ M-BOM 対応（設計 → 製造のマッピング）
+// ======================================================
+
+model BomMap {
+  id                String   @id @default(cuid())
+
+  sourceBomItemId   String   // E-BOM側
+  source            BomItem @relation("BomMapSource", fields: [sourceBomItemId], references: [id])
+
+  targetBomItemId   String   // M-BOM側
+  target            BomItem @relation("BomMapTarget", fields: [targetBomItemId], references: [id])
+
+  kind              MapKind  // one_to_one / split / merge / substitute / outsource
+  mappingRule              Json?    // 変換ルール or コメント
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// ======================================================
+// Folder / File（文脈・ドキュメント管理）
+// ======================================================
+
+model Folder {
+  id        String   @id @default(cuid())
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id])
+  name      String
+  parentId  String?
+  parent    Folder?  @relation("FolderTree", fields: [parentId], references: [id])
+  children  Folder[] @relation("FolderTree")
+  files     File[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model File {
   id        String   @id @default(cuid())
-  name      String   // アップロードされたファイル名
-  s3Key     String   @unique // S3上のオブジェクトキー
+  itemId    String
+  item      Item     @relation(fields: [itemId], references: [id])
+  folderId  String?
+  folder    Folder?  @relation(fields: [folderId], references: [id])
+  name      String
+  fileType  String?
+  url       String
+  metadata  Json?
   createdAt DateTime @default(now())
-
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  documentChunks DocumentChunk[]
+  updatedAt DateTime @updatedAt
 }
 
-model DocumentChunk {
-  id        String   @id @default(cuid())
-  content   String   // 分割されたテキスト本文
-
-  embedding Unsupported("vector(1536)")?
-
-  fileId String
-  file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-}
-
-
-model Thread {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-
-  users User[]
-  messages Message[]
-}
-
-enum AuthorType {
-  USER   // 人間ユーザー
-  AI     // AIアシスタント
-  SYSTEM // システム通知 (将来用)
-}
-
-model Message {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-
-  author    AuthorType
-  content   String     @db.Text
-
-  threadId String
-  thread   Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
-}
