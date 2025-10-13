@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 import { Loading } from "@/components/ui/Loading";
@@ -10,17 +10,12 @@ import { useAtom } from "jotai";
 import { currentUserAtom } from "@/atoms/userAtoms";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isMounted, setIsMounted] = useState(false);
   const { data, loading } = useGetMe();
   const router = useRouter();
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (isMounted && !loading) {
+    if (!loading) {
       const getRefreshToken = async () => {
         try {
           const user = await refreshedToken();
@@ -41,9 +36,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       setCurrentUser(data);
     }
-  }, [isMounted, data, loading, router, setCurrentUser]);
+  }, [data, loading, router, setCurrentUser]);
 
-  if (!isMounted || loading || !currentUser) {
+  if (loading || !currentUser) {
     return <Loading />;
   }
 

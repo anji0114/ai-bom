@@ -14,6 +14,12 @@ const fragment = graphql(`
   fragment Me on AuthenticatedUser {
     id
     email
+    name
+    role
+    tenant {
+      id
+      name
+    }
   }
 `);
 

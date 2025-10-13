@@ -1,6 +1,15 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
+export class Tenant {
+  @Field()
+  id: string;
+
+  @Field()
+  name: string;
+}
+
+@ObjectType()
 export class User {
   @Field()
   id: string;
@@ -24,5 +33,14 @@ export class AuthenticatedUser {
   email: string;
 
   @Field()
+  name: string;
+
+  @Field()
+  role: string;
+
+  @Field()
   isAuthenticated: boolean;
+
+  @Field()
+  tenant: Tenant;
 }

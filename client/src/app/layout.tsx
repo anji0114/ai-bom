@@ -12,7 +12,7 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = { title: "X-Koutei" };
+export const metadata: Metadata = { title: "AI-BOM" };
 
 export default function RootLayout({
   children,

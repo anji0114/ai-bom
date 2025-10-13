@@ -6,11 +6,9 @@ type AuthenticatedUser {
   email: String!
   id: String!
   isAuthenticated: Boolean!
-}
-
-input CreateProductInput {
-  description: String
   name: String!
+  role: String!
+  tenant: Tenant!
 }
 
 """
@@ -18,21 +16,21 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Mutation {
-  createProduct(input: CreateProductInput!): Product!
-}
-
-type Product {
+type Item {
   createdAt: DateTime!
   description: String
   id: ID!
   name: String!
+  tenantId: String!
   updatedAt: DateTime!
-  userId: ID!
 }
 
 type Query {
+  getItems: [Item!]!
   getMe: AuthenticatedUser!
-  getProduct(id: String!): Product!
-  getProducts: [Product!]!
+}
+
+type Tenant {
+  id: String!
+  name: String!
 }

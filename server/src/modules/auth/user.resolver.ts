@@ -19,6 +19,9 @@ export class UserResolver {
 
     const dbUser = await this.prismaService.user.findUnique({
       where: { id: userId },
+      include: {
+        tenant: true,
+      },
     });
 
     if (!dbUser) {
@@ -28,6 +31,12 @@ export class UserResolver {
     return {
       id: dbUser.id,
       email: dbUser.email,
+      name: dbUser.name,
+      role: dbUser.role || '',
+      tenant: {
+        id: dbUser.tenant.id,
+        name: dbUser.tenant.name,
+      },
       isAuthenticated: true,
     };
   }

@@ -23,7 +23,7 @@ const MENU_ITEMS = [
   },
   {
     label: "製品一覧",
-    href: "/products",
+    href: "/bom",
     icon: <ViewInAr />,
   },
   {

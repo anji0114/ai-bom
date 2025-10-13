@@ -35,7 +35,7 @@ export const TopHero = () => {
       >
         <Image
           src="/logo.svg"
-          alt="X-Koutei Logo"
+          alt="AI-BOM Logo"
           width={220}
           height={60}
           style={{ marginBottom: 16 }}
@@ -48,8 +48,7 @@ export const TopHero = () => {
           日本の町工場に、「つながる頭脳」を
         </Typography>
         <Typography color="text.secondary" sx={{ mb: 4, maxWidth: "700px" }}>
-          X-Koutei
-          は、中小・零細製造業が抱える情報の分断と属人化の課題を解決し、
+          AI-BOM は、中小・零細製造業が抱える情報の分断と属人化の課題を解決し、
           <br />
           AI
           の力で世界に誇るものづくりを実現するための、製造業特化型コンサルティング
@@ -77,13 +76,9 @@ export const TopHero = () => {
               ログイン
             </Button>
           )}
-          
         </Grid>
       </Box>
-      <LoginDialog
-        open={loginDialogOpen}
-        onClose={handleLoginDialogClose}
-      />
+      <LoginDialog open={loginDialogOpen} onClose={handleLoginDialogClose} />
     </Container>
   );
 };
