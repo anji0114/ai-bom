@@ -2,9 +2,9 @@
 
 import { Box, Button, Drawer, IconButton, List, ListItem } from "@mui/material";
 import {
-  Chat,
-  ChatOutlined,
   DashboardOutlined,
+  FilterCenterFocus,
+  Fitbit,
   Settings,
   ViewInAr,
 } from "@mui/icons-material";
@@ -23,13 +23,18 @@ const MENU_ITEMS = [
   },
   {
     label: "製品一覧",
-    href: "/bom",
+    href: "/items",
     icon: <ViewInAr />,
   },
   {
-    label: "チャット",
-    href: "/chat",
-    icon: <ChatOutlined />,
+    label: "E-BOM",
+    href: "/e-bom",
+    icon: <Fitbit />,
+  },
+  {
+    label: "M-BOM",
+    href: "/m-bom",
+    icon: <FilterCenterFocus />,
   },
 ];
 

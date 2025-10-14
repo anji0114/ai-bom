@@ -5,6 +5,12 @@ type RefreshTokenResponse = {
   user: {
     sub: string;
     username: string;
+    name: string;
+    role: string;
+    tenant: {
+      id: string;
+      name: string;
+    };
   };
 };
 

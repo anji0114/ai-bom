@@ -22,6 +22,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setCurrentUser({
             id: user.user.sub,
             email: user.user.username,
+            name: user.user.name,
+            role: user.user.role,
+            tenant: user.user.tenant,
           });
         } catch (error) {
           setCurrentUser(null);

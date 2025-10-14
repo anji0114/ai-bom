@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
+import { PrismaService } from '@/prisma/prisma.service';
 
 type LoginRequest = {
   username: string;
@@ -18,7 +19,10 @@ type LoginRequest = {
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   @Post('login')
   async login(
@@ -75,13 +79,24 @@ export class AuthController {
       );
     }
 
-    const username = await this.authService.getUserIdFromIdToken(idToken);
+    const user = await this.authService.getUserIdFromIdToken(idToken);
 
     try {
       const { accessToken, idToken } = await this.authService.refreshToken(
         refreshToken,
-        username.username,
+        user.username,
       );
+
+      const dbUser = await this.prismaService.user.findUnique({
+        where: { id: user.sub },
+        include: {
+          tenant: true,
+        },
+      });
+
+      if (!dbUser) {
+        throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+      }
 
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
@@ -97,7 +112,16 @@ export class AuthController {
         maxAge: 60 * 60 * 1000, // 60分
       });
 
-      const response = { success: true, user: username };
+      const response = {
+        success: true,
+        user: {
+          username: user.username,
+          sub: user.sub,
+          name: dbUser.name,
+          role: dbUser.role,
+          tenant: dbUser.tenant,
+        },
+      };
       res.json(response);
     } catch (error) {
       const message =
