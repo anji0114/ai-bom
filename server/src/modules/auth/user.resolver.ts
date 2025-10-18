@@ -1,41 +1,36 @@
-import { Resolver, Query, Context } from '@nestjs/graphql';
+import { Resolver, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { AuthenticatedUser } from '@/modules/auth/user.entity';
 import { AuthGuard } from '@/modules/auth/auth.guard';
-import { PrismaService } from '@/prisma/prisma.service';
-import { AuthenticatedRequest } from '@/types/auth';
+import { UserService } from '@/modules/auth/user.service';
+import { CurrentUser } from '@/modules/auth/current-user.decorator';
+import { CurrentUser as CurrentUserType } from '@/types/auth';
 
 @Resolver()
 export class UserResolver {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Query(() => AuthenticatedUser)
   @UseGuards(AuthGuard)
   async getMe(
-    @Context() context: { req: AuthenticatedRequest },
+    @CurrentUser() currentUser: CurrentUserType,
   ): Promise<AuthenticatedUser> {
-    const user = context.req.user;
-    const userId = user?.sub;
+    const userId = currentUser?.sub;
 
-    const dbUser = await this.prismaService.user.findUnique({
-      where: { id: userId },
-      include: {
-        tenant: true,
-      },
-    });
-
-    if (!dbUser) {
-      throw new Error('User not found');
+    if (!userId) {
+      throw new Error('User not authenticated');
     }
 
+    const user = await this.userService.findById(userId);
+
     return {
-      id: dbUser.id,
-      email: dbUser.email,
-      name: dbUser.name,
-      role: dbUser.role || '',
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role || '',
       tenant: {
-        id: dbUser.tenant.id,
-        name: dbUser.tenant.name,
+        id: user.tenant.id,
+        name: user.tenant.name,
       },
       isAuthenticated: true,
     };

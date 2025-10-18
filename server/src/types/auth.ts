@@ -5,6 +5,6 @@ export type CurrentUser = {
   sub: string;
 };
 
-export interface AuthenticatedRequest extends Request {
+export type AuthenticatedRequest = Request & {
   user?: CurrentUser;
-}
+};

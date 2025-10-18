@@ -17,7 +17,6 @@ input CreateItemInput {
   kind: String!
   metadata: JSON
   name: String!
-  tenantId: String!
 }
 
 """

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import { useCreateItemDialog } from "../hooks";
 import { CreateItemDialog } from "./CreateItemDialog";
 
@@ -9,13 +9,13 @@ export const Dashboard = () => {
     useCreateItemDialog();
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Box>
-        <Typography variant="h6">Dashboard</Typography>
+    <Box sx={{ p: 4 }}>
+      <Grid container justifyContent="space-between" alignItems="center">
+        <Typography variant="h6">ダッシュボード</Typography>
         <Button variant="contained" color="primary" onClick={handleOpen}>
-          Create Item
+          アイテム作成
         </Button>
-      </Box>
+      </Grid>
 
       <CreateItemDialog
         open={isOpen}

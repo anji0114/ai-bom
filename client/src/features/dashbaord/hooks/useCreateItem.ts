@@ -1,6 +1,5 @@
 import { graphql } from "@/gql";
 import { CreateItemDocument, CreateItemInput } from "@/gql/graphql";
-import { getTenantId } from "@/lib/getTenantId";
 import { useMutation } from "@apollo/client/react";
 
 graphql(`
@@ -14,11 +13,10 @@ graphql(`
 
 export const useCreateItem = () => {
   const [mutate, { loading, error }] = useMutation(CreateItemDocument);
-  const tenantId = getTenantId();
 
-  const createItem = (input: Omit<CreateItemInput, "tenantId">) => {
+  const createItem = (input: CreateItemInput) => {
     return mutate({
-      variables: { input: { ...input, tenantId } },
+      variables: { input },
     });
   };
 

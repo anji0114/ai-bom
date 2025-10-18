@@ -36,7 +36,6 @@ export type CreateItemInput = {
   kind: Scalars['String']['input'];
   metadata?: InputMaybe<Scalars['JSON']['input']>;
   name: Scalars['String']['input'];
-  tenantId: Scalars['String']['input'];
 };
 
 export type Item = {

@@ -23,10 +23,10 @@ export class ItemService {
     }));
   }
 
-  async createItem(input: CreateItemInput): Promise<Item> {
+  async createItem(tenantId: string, input: CreateItemInput): Promise<Item> {
     const item = await this.prisma.item.create({
       data: {
-        tenantId: input.tenantId,
+        tenantId,
         name: input.name,
         kind: input.kind,
         description: input.description,

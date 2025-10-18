@@ -7,9 +7,6 @@ export class CreateItemInput {
   name: string;
 
   @Field()
-  tenantId: string;
-
-  @Field()
   kind: string;
 
   @Field({ nullable: true })
