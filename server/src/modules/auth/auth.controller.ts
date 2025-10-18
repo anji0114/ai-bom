@@ -46,7 +46,7 @@ export class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 60 * 60 * 1000, // 60分
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30日
       });
 
       res.cookie('refreshToken', refreshToken, {
@@ -109,7 +109,7 @@ export class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
-        maxAge: 60 * 60 * 1000, // 60分
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30日
       });
 
       const response = {

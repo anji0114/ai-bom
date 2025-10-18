@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Item } from './item.entity';
 import { PrismaService } from '@/prisma/prisma.service';
 import { CreateItemInput } from './dto/create-item.input';
@@ -24,6 +24,25 @@ export class ItemService {
       attributes: item.attributes as RecordItem,
       metadata: item.metadata as RecordItem,
     }));
+  }
+
+  async getItem(tenantId: string, itemId: string): Promise<Item> {
+    const item = await this.prisma.item.findFirst({
+      where: {
+        id: itemId,
+        tenantId: tenantId,
+      },
+    });
+
+    if (!item) {
+      throw new NotFoundException('Item not found');
+    }
+
+    return {
+      ...item,
+      attributes: item.attributes as RecordItem,
+      metadata: item.metadata as RecordItem,
+    };
   }
 
   async createItem(tenantId: string, input: CreateItemInput): Promise<Item> {

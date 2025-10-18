@@ -46,6 +46,7 @@ type Mutation {
 }
 
 type Query {
+  getItem(id: String!): Item!
   getItems: [Item!]!
   getMe: AuthenticatedUser!
 }

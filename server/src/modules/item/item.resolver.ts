@@ -22,6 +22,16 @@ export class ItemResolver {
     return this.itemService.getItems(user.tenantId);
   }
 
+  @Query(() => Item)
+  @UseGuards(AuthGuard)
+  async getItem(
+    @Args('id') id: string,
+    @CurrentUser() currentUser: CurrentUserType,
+  ): Promise<Item> {
+    const user = await this.userService.findById(currentUser.sub);
+    return this.itemService.getItem(user.tenantId, id);
+  }
+
   @Mutation(() => Item)
   @UseGuards(AuthGuard)
   async createItem(

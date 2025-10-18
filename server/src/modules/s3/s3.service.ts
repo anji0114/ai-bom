@@ -25,11 +25,11 @@ export class S3Service {
 
   async uploadImage(
     file: Express.Multer.File,
-    userId: string,
+    tenantId: string,
   ): Promise<{ s3Key: string }> {
     const uuid = uuidv4();
     const safeName = file.originalname.replace(/\s+/g, '_');
-    const key = `users/${userId}/files/${uuid}-${safeName}`;
+    const key = `${tenantId}/files/${uuid}-${safeName}`;
 
     const command = new PutObjectCommand({
       Bucket: this.bucketName,

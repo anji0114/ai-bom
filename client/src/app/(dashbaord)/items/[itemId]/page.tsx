@@ -1,5 +1,7 @@
+import { ItemDetail } from "@/features/items/components/ItemDetail";
+
 const ItemPage = () => {
-  return <div>ItemPage</div>;
+  return <ItemDetail />;
 };
 
 export default ItemPage;
