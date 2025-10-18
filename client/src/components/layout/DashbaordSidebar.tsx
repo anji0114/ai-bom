@@ -13,7 +13,6 @@ import {
 import {
   ChevronLeft,
   ChevronRight,
-  DashboardOutlined,
   FilterCenterFocus,
   Fitbit,
   Settings,
@@ -22,17 +21,11 @@ import {
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { FC, useState } from "react";
-import Image from "next/image";
 
 const EXPANDED_SIDEBAR_WIDTH = 180;
 const COLLAPSED_SIDEBAR_WIDTH = 64;
 
 const MENU_ITEMS = [
-  {
-    label: "ダッシュボード",
-    href: "/dashboard",
-    icon: <DashboardOutlined />,
-  },
   {
     label: "製品一覧",
     href: "/items",
@@ -93,7 +86,7 @@ export const DashbaordSidebar: FC = () => {
               <Typography
                 variant="h6"
                 component={Link}
-                href="/dashboard"
+                href="/items"
                 sx={{
                   textDecoration: "none",
                   color: "inherit",

@@ -57,13 +57,13 @@ export const TopHero = () => {
         <Grid container spacing={2}>
           {data ? (
             <Button
-              href="/dashboard"
+              href="/items"
               variant="contained"
               size="large"
               sx={{ width: "280px" }}
               component={Link}
             >
-              ダッシュボード
+              製品一覧
             </Button>
           ) : (
             <Button

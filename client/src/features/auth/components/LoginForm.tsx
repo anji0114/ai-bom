@@ -45,7 +45,7 @@ export const LoginForm = () => {
           password: data.password,
         },
       });
-      router.push("/dashboard");
+      router.push("/items");
     } catch (err) {
       setError(
         "ログインに失敗しました。メールアドレスとパスワードを確認してください。"

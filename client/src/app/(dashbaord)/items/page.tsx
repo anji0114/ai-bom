@@ -1,5 +1,7 @@
-const ProductsPage = () => {
-  return <div>ProductsPage</div>;
+import { Items } from "@/features/items/components/Items";
+
+const ItemsPage = () => {
+  return <Items />;
 };
 
-export default ProductsPage;
+export default ItemsPage;

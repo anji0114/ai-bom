@@ -30,7 +30,7 @@ export const useLogin = () => {
         throw new Error("Login failed");
       }
 
-      router.push("/dashboard");
+      router.push("/items");
     } catch (error) {
       throw error;
     } finally {

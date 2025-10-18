@@ -14,6 +14,9 @@ export class ItemService {
       where: {
         tenantId: tenantId,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     return items.map((item) => ({
