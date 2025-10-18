@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @ObjectType()
 export class Item {
@@ -8,8 +9,17 @@ export class Item {
   @Field()
   name: string;
 
+  @Field()
+  kind: string;
+
   @Field(() => String, { nullable: true })
   description: string | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  attributes?: Record<string, any> | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  metadata?: Record<string, any> | null;
 
   @Field()
   createdAt: Date;

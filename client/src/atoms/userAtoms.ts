@@ -12,3 +12,4 @@ export type User = {
 };
 
 export const currentUserAtom = atom<User | null>(null);
+

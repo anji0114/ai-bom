@@ -14,10 +14,12 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
+    "\n  mutation CreateItem($input: CreateItemInput!) {\n    createItem(input: $input) {\n      id\n      name\n    }\n  }\n": typeof types.CreateItemDocument,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": typeof types.GetmeDocument,
     "\n  fragment Me on AuthenticatedUser {\n    id\n    email\n    name\n    role\n    tenant {\n      id\n      name\n    }\n  }\n": typeof types.MeFragmentDoc,
 };
 const documents: Documents = {
+    "\n  mutation CreateItem($input: CreateItemInput!) {\n    createItem(input: $input) {\n      id\n      name\n    }\n  }\n": types.CreateItemDocument,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": types.GetmeDocument,
     "\n  fragment Me on AuthenticatedUser {\n    id\n    email\n    name\n    role\n    tenant {\n      id\n      name\n    }\n  }\n": types.MeFragmentDoc,
 };
@@ -36,6 +38,10 @@ const documents: Documents = {
  */
 export function graphql(source: string): unknown;
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateItem($input: CreateItemInput!) {\n    createItem(input: $input) {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  mutation CreateItem($input: CreateItemInput!) {\n    createItem(input: $input) {\n      id\n      name\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

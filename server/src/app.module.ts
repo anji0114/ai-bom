@@ -10,6 +10,7 @@ import { PrismaModule } from '@/prisma/prisma.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { ItemModule } from '@/modules/item/item.module';
 import { S3Module } from './modules/s3/s3.module';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { S3Module } from './modules/s3/s3.module';
         req,
         res,
       }),
+      resolvers: { JSON: GraphQLJSON },
     }),
     PrismaModule,
     ConfigModule.forRoot({
