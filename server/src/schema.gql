@@ -11,6 +11,15 @@ type AuthenticatedUser {
   tenant: Tenant!
 }
 
+input CreateFileInput {
+  fileType: String!
+  folderId: String
+  itemId: String!
+  metadata: JSON
+  name: String!
+  s3Key: String!
+}
+
 input CreateItemInput {
   attributes: JSON
   description: String
@@ -24,10 +33,30 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type File {
+  createdAt: DateTime!
+  fileType: String
+  folderId: String
+  id: ID!
+  itemId: String!
+  metadata: JSON
+  name: String!
+  s3Key: String!
+  updatedAt: DateTime!
+}
+
+input GeneratePresignedUploadUrlInput {
+  contentType: String!
+  fileName: String!
+  folderId: String
+  itemId: String!
+}
+
 type Item {
   attributes: JSON
   createdAt: DateTime!
   description: String
+  files: [File!]!
   id: ID!
   kind: String!
   metadata: JSON
@@ -42,7 +71,14 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 scalar JSON
 
 type Mutation {
+  createFile(input: CreateFileInput!): File!
   createItem(input: CreateItemInput!): Item!
+  generatePresignedUploadUrl(input: GeneratePresignedUploadUrlInput!): PresignedUploadUrlOutput!
+}
+
+type PresignedUploadUrlOutput {
+  presignedUrl: String!
+  s3Key: String!
 }
 
 type Query {

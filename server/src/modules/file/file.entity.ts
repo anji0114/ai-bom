@@ -2,21 +2,27 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 
 @ObjectType()
-export class Item {
+export class File {
   @Field(() => ID)
   id: string;
 
   @Field()
-  name: string;
-
-  @Field()
-  kind: string;
+  itemId: string;
 
   @Field(() => String, { nullable: true })
-  description: string | null;
+  folderId?: string | null;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  attributes?: Record<string, any> | null;
+  @Field()
+  name: string;
+
+  @Field(() => String, { nullable: true })
+  fileType?: string | null;
+
+  @Field()
+  s3Key: string;
+
+  @Field()
+  url: string;
 
   @Field(() => GraphQLJSON, { nullable: true })
   metadata?: Record<string, any> | null;
@@ -26,10 +32,4 @@ export class Item {
 
   @Field()
   updatedAt: Date;
-
-  @Field()
-  tenantId: string;
-
-  @Field(() => [File])
-  files: File[];
 }

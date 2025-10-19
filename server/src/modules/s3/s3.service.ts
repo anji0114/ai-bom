@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -40,5 +45,40 @@ export class S3Service {
 
     await this.s3Client.send(command);
     return { s3Key: key }; // s3Keyを返す
+  }
+
+  async generatePresignedUploadUrl(
+    fileName: string,
+    contentType: string,
+    tenantId: string,
+  ): Promise<{ presignedUrl: string; s3Key: string }> {
+    const uuid = uuidv4();
+    const safeName = fileName.replace(/\s+/g, '_');
+    const s3Key = `${tenantId}/files/${uuid}-${safeName}`;
+
+    const command = new PutObjectCommand({
+      Bucket: this.bucketName,
+      Key: s3Key,
+      ContentType: contentType,
+    });
+
+    const presignedUrl = await getSignedUrl(this.s3Client, command, {
+      expiresIn: 900, // 15分
+    });
+
+    return { presignedUrl, s3Key };
+  }
+
+  async generatePresignedGetUrl(s3Key: string): Promise<string> {
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: s3Key,
+    });
+
+    const presignedUrl = await getSignedUrl(this.s3Client, command, {
+      expiresIn: 60 * 60, // 1時間
+    });
+
+    return presignedUrl;
   }
 }

@@ -11,6 +11,7 @@ import { AuthModule } from '@/modules/auth/auth.module';
 import { ItemModule } from '@/modules/item/item.module';
 import { S3Module } from './modules/s3/s3.module';
 import { GraphQLJSON } from 'graphql-type-json';
+import { FileModule } from './modules/file/file.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { GraphQLJSON } from 'graphql-type-json';
     AuthModule,
     ItemModule,
     S3Module,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

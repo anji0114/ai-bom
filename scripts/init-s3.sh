@@ -14,8 +14,8 @@ done
 
 echo "LocalStack is ready. Creating S3 bucket..."
 
-# バケット名を環境変数から取得（デフォルト: ai-bom-bucket）
-BUCKET_NAME=${S3_BUCKET_NAME:-"ai-bom-bucket"}
+# バケット名を環境変数から取得（デフォルト: ai-bom-files
+BUCKET_NAME=${S3_BUCKET_NAME:-"ai-bom-files"}
 
 # バケット作成
 aws --endpoint-url=http://localhost:4566 \
@@ -23,6 +23,30 @@ aws --endpoint-url=http://localhost:4566 \
   --region ap-northeast-1
 
 echo "S3 bucket '$BUCKET_NAME' created successfully!"
+
+# CORS設定を適用
+echo "Configuring CORS for bucket '$BUCKET_NAME'..."
+
+cat > /tmp/cors.json <<EOF
+{
+  "CORSRules": [
+    {
+      "AllowedOrigins": ["http://localhost:3000", "http://localhost:3300"],
+      "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
+      "AllowedHeaders": ["*"],
+      "ExposeHeaders": ["ETag"],
+      "MaxAgeSeconds": 3000
+    }
+  ]
+}
+EOF
+
+aws --endpoint-url=http://localhost:4566 \
+  s3api put-bucket-cors \
+  --bucket $BUCKET_NAME \
+  --cors-configuration file:///tmp/cors.json
+
+echo "CORS configuration applied successfully!"
 
 # バケットリストを確認
 aws --endpoint-url=http://localhost:4566 \

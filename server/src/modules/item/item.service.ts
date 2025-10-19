@@ -23,6 +23,7 @@ export class ItemService {
       ...item,
       attributes: item.attributes as RecordItem,
       metadata: item.metadata as RecordItem,
+      files: [],
     }));
   }
 
@@ -42,6 +43,7 @@ export class ItemService {
       ...item,
       attributes: item.attributes as RecordItem,
       metadata: item.metadata as RecordItem,
+      files: [],
     };
   }
 
@@ -61,6 +63,7 @@ export class ItemService {
       ...item,
       attributes: item.attributes as RecordItem,
       metadata: item.metadata as RecordItem,
+      files: [],
     };
   }
 }

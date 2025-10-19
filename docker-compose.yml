@@ -17,7 +17,7 @@ services:
     environment:
       - SERVICES=s3
       - DEBUG=1
-      - S3_BUCKET_NAME=ai-bom-bucket
+      - S3_BUCKET_NAME=ai-bom-files
     volumes:
       - ./scripts/init-s3.sh:/etc/localstack/init/ready.d/init-s3.sh
 

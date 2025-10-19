@@ -10,7 +10,9 @@ import {
   Typography,
   Divider,
   Stack,
+  Grid,
 } from "@mui/material";
+import { FileUpload } from "./FileUpload";
 
 export const ItemDetail = () => {
   const { itemId } = useParams() as { itemId: string };
@@ -43,7 +45,7 @@ export const ItemDetail = () => {
   const item = data.getItem;
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Grid container spacing={2} flexDirection={"column"} sx={{ p: 3 }}>
       <Card>
         <CardContent>
           <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold" }}>
@@ -109,6 +111,8 @@ export const ItemDetail = () => {
           </Stack>
         </CardContent>
       </Card>
-    </Box>
+
+      <FileUpload itemId={itemId} />
+    </Grid>
   );
 };

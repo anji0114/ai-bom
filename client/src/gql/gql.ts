@@ -17,6 +17,8 @@ type Documents = {
     "\n  fragment ItemFragment on Item {\n    id\n    name\n    kind\n    description\n    createdAt\n  }\n": typeof types.ItemFragmentFragmentDoc,
     "\n  fragment ItemListFragment on Item {\n    id\n    ...ItemFragment\n  }\n": typeof types.ItemListFragmentFragmentDoc,
     "\n  mutation CreateItem($input: CreateItemInput!) {\n    createItem(input: $input) {\n      id\n      name\n    }\n  }\n": typeof types.CreateItemDocument,
+    "\n  mutation GeneratePresignedUploadUrl(\n    $input: GeneratePresignedUploadUrlInput!\n  ) {\n    generatePresignedUploadUrl(input: $input) {\n      presignedUrl\n      s3Key\n    }\n  }\n": typeof types.GeneratePresignedUploadUrlDocument,
+    "\n  mutation CreateItemFile($input: CreateFileInput!) {\n    createFile(input: $input) {\n      id\n      itemId\n      s3Key\n      name\n      fileType\n      folderId\n      metadata\n    }\n  }\n": typeof types.CreateItemFileDocument,
     "\n  query GetItem($id: String!) {\n    getItem(id: $id) {\n      id\n      name\n      kind\n      description\n      createdAt\n    }\n  }\n": typeof types.GetItemDocument,
     "\n  query GetItems {\n    getItems {\n      ...ItemListFragment\n    }\n  }\n": typeof types.GetItemsDocument,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": typeof types.GetmeDocument,
@@ -26,6 +28,8 @@ const documents: Documents = {
     "\n  fragment ItemFragment on Item {\n    id\n    name\n    kind\n    description\n    createdAt\n  }\n": types.ItemFragmentFragmentDoc,
     "\n  fragment ItemListFragment on Item {\n    id\n    ...ItemFragment\n  }\n": types.ItemListFragmentFragmentDoc,
     "\n  mutation CreateItem($input: CreateItemInput!) {\n    createItem(input: $input) {\n      id\n      name\n    }\n  }\n": types.CreateItemDocument,
+    "\n  mutation GeneratePresignedUploadUrl(\n    $input: GeneratePresignedUploadUrlInput!\n  ) {\n    generatePresignedUploadUrl(input: $input) {\n      presignedUrl\n      s3Key\n    }\n  }\n": types.GeneratePresignedUploadUrlDocument,
+    "\n  mutation CreateItemFile($input: CreateFileInput!) {\n    createFile(input: $input) {\n      id\n      itemId\n      s3Key\n      name\n      fileType\n      folderId\n      metadata\n    }\n  }\n": types.CreateItemFileDocument,
     "\n  query GetItem($id: String!) {\n    getItem(id: $id) {\n      id\n      name\n      kind\n      description\n      createdAt\n    }\n  }\n": types.GetItemDocument,
     "\n  query GetItems {\n    getItems {\n      ...ItemListFragment\n    }\n  }\n": types.GetItemsDocument,
     "\n  query Getme {\n    getMe {\n      ...Me\n    }\n  }\n": types.GetmeDocument,
@@ -58,6 +62,14 @@ export function graphql(source: "\n  fragment ItemListFragment on Item {\n    id
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation CreateItem($input: CreateItemInput!) {\n    createItem(input: $input) {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  mutation CreateItem($input: CreateItemInput!) {\n    createItem(input: $input) {\n      id\n      name\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation GeneratePresignedUploadUrl(\n    $input: GeneratePresignedUploadUrlInput!\n  ) {\n    generatePresignedUploadUrl(input: $input) {\n      presignedUrl\n      s3Key\n    }\n  }\n"): (typeof documents)["\n  mutation GeneratePresignedUploadUrl(\n    $input: GeneratePresignedUploadUrlInput!\n  ) {\n    generatePresignedUploadUrl(input: $input) {\n      presignedUrl\n      s3Key\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation CreateItemFile($input: CreateFileInput!) {\n    createFile(input: $input) {\n      id\n      itemId\n      s3Key\n      name\n      fileType\n      folderId\n      metadata\n    }\n  }\n"): (typeof documents)["\n  mutation CreateItemFile($input: CreateFileInput!) {\n    createFile(input: $input) {\n      id\n      itemId\n      s3Key\n      name\n      fileType\n      folderId\n      metadata\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
