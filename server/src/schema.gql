@@ -43,6 +43,7 @@ type File {
   name: String!
   s3Key: String!
   updatedAt: DateTime!
+  url: String!
 }
 
 input GeneratePresignedUploadUrlInput {

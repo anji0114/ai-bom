@@ -1,5 +1,6 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
+import { File } from '../file/file.entity';
 
 @ObjectType()
 export class Item {

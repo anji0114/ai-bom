@@ -33,17 +33,31 @@ export class ItemService {
         id: itemId,
         tenantId: tenantId,
       },
+      include: {
+        files: {
+          orderBy: {
+            createdAt: 'asc',
+          },
+          take: 1,
+        },
+      },
     });
 
     if (!item) {
       throw new NotFoundException('Item not found');
     }
 
+    const files = item.files.map((file) => ({
+      ...file,
+      url: 'https://google.com',
+      metadata: file.metadata as RecordItem,
+    }));
+
     return {
       ...item,
       attributes: item.attributes as RecordItem,
       metadata: item.metadata as RecordItem,
-      files: [],
+      files,
     };
   }
 

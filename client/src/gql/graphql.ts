@@ -58,6 +58,7 @@ export type File = {
   name: Scalars['String']['output'];
   s3Key: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  url: Scalars['String']['output'];
 };
 
 export type GeneratePresignedUploadUrlInput = {
