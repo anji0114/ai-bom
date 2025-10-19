@@ -195,7 +195,7 @@ model File {
   folder    Folder?  @relation(fields: [folderId], references: [id])
   name      String
   fileType  String?
-  url       String
+  s3Key     String
   metadata  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

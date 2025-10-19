@@ -71,10 +71,56 @@ export class AuthService {
     }
   }
 
-  async getUserIdFromIdToken(idToken: string): Promise<{
+  /**
+   * Decode JWT without verification
+   * Useful when token is expired but we need to extract payload
+   */
+  private decodeIdTokenWithoutVerification(idToken: string): {
+    username: string;
+    sub: string;
+  } {
+    try {
+      const parts = idToken.split('.');
+      if (parts.length !== 3) {
+        throw new Error('Invalid token format');
+      }
+
+      // Decode the payload (second part)
+      const payload: unknown = JSON.parse(
+        Buffer.from(parts[1], 'base64').toString('utf-8'),
+      );
+
+      if (typeof payload !== 'object' || payload === null) {
+        throw new Error('Invalid token payload');
+      }
+
+      const payloadObj = payload as Record<string, unknown>;
+      const username = payloadObj['cognito:username'] as string;
+      const sub = payloadObj['sub'] as string;
+
+      if (!username || !sub) {
+        throw new Error('Missing username or sub in token payload');
+      }
+
+      return { username, sub };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to decode token: ${message}`);
+    }
+  }
+
+  async getUserIdFromIdToken(
+    idToken: string,
+    options?: { skipVerification?: boolean },
+  ): Promise<{
     username: string;
     sub: string;
   }> {
+    // If skipVerification is true, decode without verifying (useful for expired tokens)
+    if (options?.skipVerification) {
+      return this.decodeIdTokenWithoutVerification(idToken);
+    }
+
     try {
       const payload = await this.idTokenVerifier.verify(idToken);
       const username = payload['cognito:username'] as string;

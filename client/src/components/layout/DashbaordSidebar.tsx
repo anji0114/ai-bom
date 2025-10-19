@@ -11,18 +11,19 @@ import {
   Typography,
 } from "@mui/material";
 import {
-  ChevronLeft,
-  ChevronRight,
   FilterCenterFocus,
   Fitbit,
+  KeyboardDoubleArrowLeft,
+  KeyboardDoubleArrowRight,
   Settings,
   ViewInAr,
 } from "@mui/icons-material";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { FC, useState } from "react";
+import Image from "next/image";
 
-const EXPANDED_SIDEBAR_WIDTH = 180;
+const EXPANDED_SIDEBAR_WIDTH = 140;
 const COLLAPSED_SIDEBAR_WIDTH = 64;
 
 const MENU_ITEMS = [
@@ -83,23 +84,22 @@ export const DashbaordSidebar: FC = () => {
             }}
           >
             {isExpanded && (
-              <Typography
-                variant="h6"
-                component={Link}
-                href="/items"
-                sx={{
-                  textDecoration: "none",
-                  color: "inherit",
-                  fontWeight: "bold",
-                  whiteSpace: "nowrap",
-                  mr: "auto",
-                }}
-              >
-                AI-BOM
-              </Typography>
+              <Box sx={{ flex: 1, pt: "5px" }}>
+                <Link href="/items">
+                  <Image src="/logo.svg" alt="AI-BOM" width={24} height={24} />
+                </Link>
+              </Box>
             )}
-            <IconButton onClick={() => setIsExpanded(!isExpanded)} size="small">
-              {isExpanded ? <ChevronLeft /> : <ChevronRight />}
+            <IconButton
+              onClick={() => setIsExpanded(!isExpanded)}
+              size="small"
+              sx={{ width: 24, height: 24 }}
+            >
+              {isExpanded ? (
+                <KeyboardDoubleArrowLeft fontSize="small" />
+              ) : (
+                <KeyboardDoubleArrowRight fontSize="small" />
+              )}
             </IconButton>
           </Box>
           <List sx={{ mt: 3 }}>
@@ -109,36 +109,24 @@ export const DashbaordSidebar: FC = () => {
                   title={!isExpanded ? item.label : ""}
                   placement="right"
                 >
-                  <Button
+                  <SidebarButton
                     href={item.href}
-                    variant="text"
-                    fullWidth
-                    sx={{
-                      color: (theme) => theme.palette.text.primary,
-                      justifyContent: isExpanded ? "flex-start" : "center",
-                      backgroundColor: pathname.startsWith(item.href)
-                        ? "white"
-                        : undefined,
-                      border: (theme) =>
-                        pathname.startsWith(item.href)
-                          ? `1px solid ${theme.palette.grey[300]}`
-                          : `1px solid transparent`,
-                      minWidth: 0,
-                      px: isExpanded ? 2 : 1,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                    }}
-                    startIcon={isExpanded ? item.icon : undefined}
-                    component={Link}
-                  >
-                    {isExpanded ? item.label : item.icon}
-                  </Button>
+                    label={item.label}
+                    icon={item.icon}
+                    isExpanded={isExpanded}
+                    pathname={pathname}
+                  />
                 </Tooltip>
               </ListItem>
             ))}
           </List>
         </Box>
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: isExpanded ? "flex-start" : "center",
+          }}
+        >
           <Tooltip title={!isExpanded ? "設定" : ""} placement="right">
             <IconButton>
               <Settings />
@@ -147,5 +135,46 @@ export const DashbaordSidebar: FC = () => {
         </Box>
       </Box>
     </Drawer>
+  );
+};
+
+type SidebarButtonProps = {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  isExpanded: boolean;
+  pathname: string;
+};
+
+const SidebarButton = ({
+  href,
+  label,
+  icon,
+  isExpanded,
+  pathname,
+}: SidebarButtonProps) => {
+  return (
+    <Button
+      href={href}
+      variant="text"
+      fullWidth
+      sx={{
+        color: (theme) => theme.palette.text.primary,
+        justifyContent: isExpanded ? "flex-start" : "center",
+        backgroundColor: pathname.startsWith(href) ? "white" : undefined,
+        border: (theme) =>
+          pathname.startsWith(href)
+            ? `1px solid ${theme.palette.grey[300]}`
+            : `1px solid transparent`,
+        minWidth: 0,
+        px: isExpanded ? 2 : 1,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+      }}
+      startIcon={isExpanded ? icon : undefined}
+      component={Link}
+    >
+      {isExpanded ? label : icon}
+    </Button>
   );
 };

@@ -79,7 +79,9 @@ export class AuthController {
       );
     }
 
-    const user = await this.authService.getUserIdFromIdToken(idToken);
+    const user = await this.authService.getUserIdFromIdToken(idToken, {
+      skipVerification: true,
+    });
 
     try {
       const { accessToken, idToken } = await this.authService.refreshToken(
